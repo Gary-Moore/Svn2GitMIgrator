@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DigiGitMigrator.Domain.Services;
+using Svn2GitMIgrator.App.Models;
+using Svn2GitMIgrator.Domain.Svn;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Svn2GitMIgrator.App.Controllers
 {
     public class HomeController : Controller
     {
+        private ISvnService _svnService;
+
+        public HomeController(ISvnService svnService)
+        {
+            _svnService = svnService;
+        }
+
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult About()
+        [HttpPost]
+        public JsonResult Search(SvnRepoQueryRequest request)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            var data = _svnService.GetRepoList(request).ToList();
+            return Json(data);
         }
     }
 }
