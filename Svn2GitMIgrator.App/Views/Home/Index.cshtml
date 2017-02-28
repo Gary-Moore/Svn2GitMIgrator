@@ -28,7 +28,10 @@
             <div class="list-group">
                 <a ng-repeat="repo in vm.repos" class="list-group-item">
                     <h4>{{repo.Name}}</h4>
-                    <p class="list-group-item-text">{{repo.Url}}</p>
+                    <p class="list-group-item-text clearfix">
+                        <input type="button" class="btn btn-info pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)"/>
+                        {{repo.Url}}
+                    </p>
                 </a>
             </div>
         </div>

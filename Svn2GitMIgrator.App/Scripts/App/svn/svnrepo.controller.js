@@ -7,13 +7,19 @@
 
     function SvnRepoController(svnService) {
         var vm = this;
-        vm.search = search;
         vm.init = init;
+        vm.search = search;
+        vm.migrate = migrate;
 
         vm.init();
 
         function init() {
             vm.model = {}
+        }
+
+        function migrate(repoUrl) {
+            vm.model.repositorylUrl = repoUrl;
+            svnService.migrate(vm.model);
         }
 
         function search() {

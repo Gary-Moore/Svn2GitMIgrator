@@ -1,10 +1,10 @@
-﻿using Svn2GitMIgrator.Domain.Svn;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace DigiGitMigrator.Domain.Services
+namespace Svn2GitMIgrator.Domain.Svn
 {
     public interface ISvnService
     {
-        IEnumerable<SvnRepoInfo> GetRepoList(SvnRepoQueryRequest request);
+        IEnumerable<SvnRepoInfo> GetRepoList(SvnRepositoryRequest request);
+        void Checkout(SvnRepositoryRequest request);
     }
 }

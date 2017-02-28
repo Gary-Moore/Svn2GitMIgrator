@@ -15,8 +15,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Svn2GitMIgrator.Domain.FileSystem;
+using Svn2GitMIgrator.Domain.Svn;
+
 namespace Svn2GitMIgrator.App.DependencyResolution {
-    using DigiGitMigrator.Domain.Services;
     using StructureMap;
     using StructureMap.Configuration.DSL;
     using StructureMap.Graph;
@@ -28,6 +30,7 @@ namespace Svn2GitMIgrator.App.DependencyResolution {
             Scan(
                 scan => {
                     scan.TheCallingAssembly();
+                    scan.LookForRegistries();
                     scan.WithDefaultConventions();
 					scan.With(new ControllerConvention());
                 });

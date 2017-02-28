@@ -7,6 +7,8 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
 {
     public class PowerShellService
     {
+        //private readonly ILog _log = LogManager.GetLogger(typeof(PowerShellService));
+
         public void RunScript(string scriptFilePath, IEnumerable<KeyValuePair<string, string>> arguments)
         {
             Runspace runspace = RunspaceFactory.CreateRunspace();
@@ -29,6 +31,24 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
                 powershell.Commands = command;
 
                 Collection<PSObject> results = powershell.Invoke();
+
+                foreach (var outputItem in results)
+                {
+                    if (outputItem != null)
+                    {
+                        
+                    }
+                }
+
+                // log any errors
+                var errorStream = powershell.Streams.Error;
+                if (errorStream.Count > 0)
+                {
+                    foreach (var error in errorStream)
+                    {
+                        //error.ErrorDetails.Message;
+                    }
+                }
             }
         }
     }
