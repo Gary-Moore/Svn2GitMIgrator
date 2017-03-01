@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Svn2GitMIgrator.Domain.FileSystem;
 using Svn2GitMIgrator.Domain.Svn;
-using Svn2GitMIgrator.Domain.TaskAutomation;
 
 namespace Svn2GitMIgrator.Domain
 {
@@ -23,10 +19,8 @@ namespace Svn2GitMIgrator.Domain
         public void Migrate(SvnRepositoryRequest request)
         {
             var checkoutPath = _svnService.Checkout(request);
-
-            LogUniqueUserToFile(checkoutPath);
-
-            ConvertUserNames(checkoutPath);
+            
+            LogUniqueUserToFile(request, checkoutPath);
 
             // clone directory into git
 
@@ -48,29 +42,28 @@ namespace Svn2GitMIgrator.Domain
 
             // push to new project
         }
-
-        private void LogUniqueUserToFile(string checkoutPath)
-        {
-            var powerScript = new ResolveUniqueSvnUserNames();
-            powerScript.AddArgument("path", checkoutPath);
-            powerScript.Execute();
-        }
-
-        private void ConvertUserNames(string checkoutPath)
+        
+        private void LogUniqueUserToFile(SvnRepositoryRequest request, string checkoutPath)
         {
             var filePath = FileSystemHelper.GetFilePath("knownUsernames.json");
 
-            var users = JsonConvert.DeserializeObject<KnownUserList>(File.ReadAllText(filePath));
+            var knownUsers = JsonConvert.DeserializeObject<KnownUserList>(File.ReadAllText(filePath));
             var authorsFilePath = Path.Combine(checkoutPath, "authors-transform.txt");
+            var uniqueAuthors = _svnService.LogUniqueUsers(request, checkoutPath);
 
-
-            string text = File.ReadAllText(authorsFilePath);
-            foreach (var user in users.Users)
+            StringBuilder authorText = new StringBuilder();
+            foreach (var uniqueAuthor in uniqueAuthors)
             {
-                text = text.Replace(user.Svnname, string.Format("{0} <{1}@parliament.uk>", user.Author, user.Svnname));
-            }
+                var knownUser = knownUsers.Users.SingleOrDefault(x => x.Svnname == uniqueAuthor);
 
-            File.WriteAllText(authorsFilePath, text);
+                if (knownUser != null)
+                {
+                    authorText.AppendFormat("{1} = {0} <{1}@parliament.uk>", knownUser.Author, knownUser.Svnname);
+                    authorText.AppendLine();
+                }                
+            }
+            
+            File.WriteAllText(authorsFilePath, authorText.ToString());
 
         }
     }

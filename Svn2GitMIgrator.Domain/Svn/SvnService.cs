@@ -65,6 +65,21 @@ namespace Svn2GitMIgrator.Domain.Svn
             return workingCheckoutDirectoryPath;
         }
 
+        public IEnumerable<string> LogUniqueUsers(SvnRepositoryRequest request, string checkoutPath)
+        {
+            var authors = new List<string>();
+            SetCredentials(request);
+            using (var client = GetSvnClient())
+            {
+                var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
+                client.Log(checkoutPath, (o, e) => {
+                    authors.Add(e.Author);
+                });
+            }
+
+            return authors.Distinct();
+        }
+
         private string SetWorkingCheckoutDirectoryPath(string repositorylUrl)
         {
             var splitVals = repositorylUrl.Split('/');

@@ -10,6 +10,7 @@
         vm.init = init;
         vm.search = search;
         vm.migrate = migrate;
+        vm.navigate = navigate;
 
         vm.init();
 
@@ -22,6 +23,11 @@
             svnService.migrate(vm.model).then(function(result) {
                 
             });
+        }
+
+        function navigate(url) {
+            vm.model.rootUrl = url;
+            vm.search();
         }
 
         function search() {

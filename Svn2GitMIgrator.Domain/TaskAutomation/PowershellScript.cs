@@ -41,27 +41,30 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
                 return Path.Combine(appDirectory.Parent.FullName, ScriptFolderName, Name);
             }
 
+
             throw new InvalidOperationException("Failed to resolve the parent directory of the applicattion base directory");
         }
 
         public void Execute()
         {
-            Runspace runspace = RunspaceFactory.CreateRunspace();
+            RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
+
+            Runspace runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
             runspace.Open();
 
             using (PowerShell powershell = PowerShell.Create())
             {
                 powershell.Runspace = runspace;
-                var command = Create();
-                var pipeline = runspace.CreatePipeline();
+                PSCommand pscommand = new PSCommand();
 
+                var command = new Command(ResolveFilePath());
                 // add the arguments
                 foreach (var parameter in ArgumentsList)
                 {
-                    command.AddParameter(parameter.Key, parameter.Value);
+                    command.Parameters.Add(parameter.Key, parameter.Value);
                 }
 
-                powershell.Commands = command;
+                powershell.Commands = pscommand.AddCommand(command);
 
                 Collection<PSObject> results = powershell.Invoke();
 

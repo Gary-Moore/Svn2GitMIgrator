@@ -26,13 +26,18 @@
         <div class="col-md-12">
             <h2>Svn folders</h2>
             <div class="list-group">
-                <a ng-repeat="repo in vm.repos" class="list-group-item">
+                <div ng-repeat="repo in vm.repos" class="list-group-item">
                     <h4>{{repo.Name}}</h4>
                     <p class="list-group-item-text clearfix">
-                        <input type="button" class="btn btn-info pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)"/>
+                        
+                        <input type="button" class="btn btn-primary pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)"/>
+                        
+                        <button type="button" class="btn btn-default pull-right" ng-click="vm.navigate(repo.Url)">
+                            <i class="glyphicon glyphicon-circle-arrow-down"></i>
+                        </button> 
                         {{repo.Url}}
                     </p>
-                </a>
+                </div>
             </div>
         </div>
         

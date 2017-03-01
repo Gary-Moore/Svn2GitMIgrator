@@ -6,5 +6,6 @@ namespace Svn2GitMIgrator.Domain.Svn
     {
         IEnumerable<SvnRepoInfo> GetRepoList(SvnRepositoryRequest request);
         string Checkout(SvnRepositoryRequest request);
+        IEnumerable<string> LogUniqueUsers(SvnRepositoryRequest request, string checkoutPath);
     }
 }
