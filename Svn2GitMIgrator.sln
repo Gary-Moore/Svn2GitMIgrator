@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Svn2GitMIgrator.App", "Svn2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Svn2GitMIgrator.Domain", "Svn2GitMIgrator.Domain\Svn2GitMIgrator.Domain.csproj", "{ED306D40-2D9C-441A-8D96-5010E9EB09A4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowershellScripts", "PowershellScripts", "{A106B4AC-DBB1-4537-AE82-5297F7AEE5D3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowershellScripts", "PowershellScripts", "{7ECD0C6A-36F6-4422-B1FD-FEDFCBD7E6D1}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\Work\SolutionCreator\CreatorApp\PowershellScripts\extractUniqueUsers.ps1 = ..\..\..\Work\SolutionCreator\CreatorApp\PowershellScripts\extractUniqueUsers.ps1
+		resolveUniqueSvnUsernames.ps1 = resolveUniqueSvnUsernames.ps1
 	EndProjectSection
 EndProject
 Global

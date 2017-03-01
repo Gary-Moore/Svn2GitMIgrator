@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Svn2GitMIgrator.Domain.Svn;
 
 namespace Svn2GitMIgrator.Domain.FileSystem
 {
@@ -31,6 +33,17 @@ namespace Svn2GitMIgrator.Domain.FileSystem
             {
                 directory.Delete(true);
             }
+        }
+
+        public static string GetFilePath(string name)
+        {
+            var appDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            if (appDirectory.Parent != null)
+            {
+                return  Path.Combine(appDirectory.FullName, name);
+            }
+
+            return null;
         }
     }
 }

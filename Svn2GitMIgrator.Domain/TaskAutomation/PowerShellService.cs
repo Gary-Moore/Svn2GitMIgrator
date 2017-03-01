@@ -9,7 +9,7 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
     {
         //private readonly ILog _log = LogManager.GetLogger(typeof(PowerShellService));
 
-        public void RunScript(string scriptFilePath, IEnumerable<KeyValuePair<string, string>> arguments)
+        public void RunScript(PSCommand command, IEnumerable<KeyValuePair<string, string>> arguments)
         {
             Runspace runspace = RunspaceFactory.CreateRunspace();
             runspace.Open();
@@ -17,11 +17,6 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
             using (PowerShell powershell = PowerShell.Create())
             {
                 powershell.Runspace = runspace;
-
-                // add the script as the command
-                var command = new PSCommand();
-                command.AddCommand(scriptFilePath);
-
                 // add the arguments
                 foreach (var parameter in arguments)
                 {

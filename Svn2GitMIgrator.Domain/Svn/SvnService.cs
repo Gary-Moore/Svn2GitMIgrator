@@ -50,7 +50,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             }
         }
 
-        public void Checkout(SvnRepositoryRequest request)
+        public string Checkout(SvnRepositoryRequest request)
         {
             SetCredentials(request);
             var workingCheckoutDirectoryPath = SetWorkingCheckoutDirectoryPath(request.RepositorylUrl);
@@ -61,6 +61,8 @@ namespace Svn2GitMIgrator.Domain.Svn
                 client.CheckOut(repoUrl, workingCheckoutDirectoryPath);
                 client.Upgrade(workingCheckoutDirectoryPath);
             }
+
+            return workingCheckoutDirectoryPath;
         }
 
         private string SetWorkingCheckoutDirectoryPath(string repositorylUrl)

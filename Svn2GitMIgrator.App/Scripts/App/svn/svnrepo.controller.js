@@ -19,7 +19,9 @@
 
         function migrate(repoUrl) {
             vm.model.repositorylUrl = repoUrl;
-            svnService.migrate(vm.model);
+            svnService.migrate(vm.model).then(function(result) {
+                
+            });
         }
 
         function search() {

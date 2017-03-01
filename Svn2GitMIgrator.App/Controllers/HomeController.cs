@@ -2,16 +2,19 @@
 using Svn2GitMIgrator.Domain.Svn;
 using System.Linq;
 using System.Web.Mvc;
+using Svn2GitMIgrator.Domain;
 
 namespace Svn2GitMIgrator.App.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ISvnService _svnService;
+        private readonly IMigrationService _migrationService;
 
-        public HomeController(ISvnService svnService)
+        public HomeController(ISvnService svnService, IMigrationService migrationService)
         {
             _svnService = svnService;
+            _migrationService = migrationService;
         }
 
         public ActionResult Index()
@@ -22,7 +25,7 @@ namespace Svn2GitMIgrator.App.Controllers
         [HttpPost]
         public ActionResult MigrateRepo(SvnRepositoryRequest request)
         {
-            _svnService.Checkout(request);
+            _migrationService.Migrate(request);
             return new EmptyResult();
         }
 

@@ -15,6 +15,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Svn2GitMIgrator.Domain;
 using Svn2GitMIgrator.Domain.FileSystem;
 using Svn2GitMIgrator.Domain.Svn;
 
@@ -35,6 +36,7 @@ namespace Svn2GitMIgrator.App.DependencyResolution {
 					scan.With(new ControllerConvention());
                 });
             For<ISvnService>().Use<SvnService>();
+            For<IMigrationService>().Use<MigrationService>();
         }
 
         #endregion

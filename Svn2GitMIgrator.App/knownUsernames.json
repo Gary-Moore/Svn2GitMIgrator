@@ -1,0 +1,16 @@
+﻿{
+  "users": [
+    {
+      "svnname": "adamss",
+      "author": "Stephen Adams"
+    },
+    {
+      "svnname": "bolts",
+      "author": "Stephen Bolt"
+    },
+    {
+      "svnname": "moorega",
+      "author": "Gary Moore"
+    }
+  ]
+}
