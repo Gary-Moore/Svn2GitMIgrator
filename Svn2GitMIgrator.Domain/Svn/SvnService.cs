@@ -85,7 +85,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             var splitVals = repositorylUrl.Split('/');
             var appFolderName = splitVals[splitVals.Length - 2];
 
-            var workingCheckoutDirectoryPath = _workingDirectoryPath + "\\" + appFolderName;
+            var workingCheckoutDirectoryPath = Path.Combine(_workingDirectoryPath, splitVals[splitVals.Length - 3], splitVals[splitVals.Length - 2]);
             var directory = FileSystemHelper.EnsureFolderExists(workingCheckoutDirectoryPath);
             FileSystemHelper.ClearFolder(directory);
             
