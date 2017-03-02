@@ -72,7 +72,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             using (var client = GetSvnClient())
             {
                 var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                client.Log(checkoutPath, (o, e) => {
+                client.Log(repoUrl.Uri, (o, e) => {
                     authors.Add(e.Author);
                 });
             }

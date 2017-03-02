@@ -38,6 +38,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NGitLab, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NGitLab.1.0.5\lib\net45\NGitLab.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SharpSvn, Version=1.9005.3940.224, Culture=neutral, PublicKeyToken=d729672594885a28, processorArchitecture=AMD64">
       <HintPath>..\packages\SharpSvn.1.9-x64.1.9005.3940.224\lib\net40\SharpSvn.dll</HintPath>
       <Private>True</Private>
@@ -62,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileSystem\FileSystemHelper.cs" />
+    <Compile Include="Git\GitLabService.cs" />
     <Compile Include="IMigrationService.cs" />
     <Compile Include="MigrationService.cs" />
     <Compile Include="Svn\User.cs" />
@@ -71,7 +76,7 @@
     <Compile Include="Svn\SvnService.cs" />
     <Compile Include="Svn\SvnRepoInfo.cs" />
     <Compile Include="Svn\SvnRepositoryRequest.cs" />
-    <Compile Include="TaskAutomation\ResolveUniqueSvnUserNames.cs" />
+    <Compile Include="TaskAutomation\CloneSvnRepository.cs" />
     <Compile Include="Svn\KnownUserList.cs" />
   </ItemGroup>
   <ItemGroup>
