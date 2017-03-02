@@ -33,21 +33,7 @@ namespace Svn2GitMIgrator.Domain
 
             CloneRepository(request, checkoutPath);
 
-            // clone directory into git
-
             // create git ignore file
-
-            // push into a bare git repo
-
-            // set default branch
-
-            // push temp repo into new bare repo
-
-            // delete temp repo
-
-            // rename trunk to master
-
-            // clean up branches
 
             // create new gitlab project
 
