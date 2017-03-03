@@ -87,6 +87,13 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
             powerScript.AddArgument("password", request.Password);
+
+            powerScript.AddArgument("projectName", "PapersLaid.Admin");
+            powerScript.AddArgument("privatetoken", "iac_MyKnRhxXH1ZxWfEp");
+            powerScript.AddArgument("gitlabUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com");
+            powerScript.AddArgument("originUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/PapersLaid.Admin.git");
+
+
             powerScript.Execute();
         }
     }

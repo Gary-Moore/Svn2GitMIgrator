@@ -35,16 +35,7 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
 
         protected string ResolveFilePath()
         {
-            //var appDirectory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            //if (appDirectory.Parent != null)
-            //{
-            //    return Path.Combine(appDirectory.Parent.FullName, ScriptFolderName, Name);
-            //}
-
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PowerShell", Name);
-
-
-            //throw new InvalidOperationException("Failed to resolve the parent directory of the applicattion base directory");
         }
 
         public void Execute()
