@@ -28,11 +28,11 @@ Param(
 	[Parameter(Mandatory=$true)][string]$repoUrl, 
 	[Parameter(Mandatory=$true)][string]$checkoutPath,
 	[Parameter(Mandatory=$true)][string]$username,
-	[Parameter(Mandatory=$true)][string]$password
-	#[Parameter(Mandatory=$true)][string]$projectName,
-	#[Parameter(Mandatory=$true)][string]$privatetoken,
-	#[Parameter(Mandatory=$true)][string]$gitlabUrl,
-	#[Parameter(Mandatory=$true)][string]$originUrl
+	[Parameter(Mandatory=$true)][string]$password,
+	[Parameter(Mandatory=$true)][string]$projectName,
+	[Parameter(Mandatory=$true)][string]$privatetoken,
+	[Parameter(Mandatory=$true)][string]$gitlabUrl,
+	[Parameter(Mandatory=$true)][string]$originUrl
 )
 
 #Variables
@@ -67,5 +67,3 @@ $ git push origin --tags
 
 #$postParams = @{name=$projectName; private_token=$privatetoken; visibility_level=10}
 #Invoke-WebRequest -Uri $gitlabUrl -Method POST -Body $postParams
-
-

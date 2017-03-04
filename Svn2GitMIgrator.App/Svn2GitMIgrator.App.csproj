@@ -171,7 +171,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="knownUsernames.json" />
-    <Content Include="PowerShell\cloneSVNRepository.ps1">
+    <Content Include="PowerShell\Migrate-SvnRepoToGit.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
