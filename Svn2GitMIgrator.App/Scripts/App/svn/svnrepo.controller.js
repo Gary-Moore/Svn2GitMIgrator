@@ -3,12 +3,13 @@
 
     angular.module('migrator.svn').controller('SvnRepoController', SvnRepoController);
 
-    SvnRepoController.$inject = ['svnService'];
+    SvnRepoController.$inject = ['svnService', 'localStorageService'];
 
-    function SvnRepoController(svnService) {
+    function SvnRepoController(svnService, localStorageService) {
         var vm = this;
         vm.init = init;
         vm.search = search;
+        vm.saveSettings = saveSettings;
         vm.migrate = migrate;
         vm.navigate = navigate;
 
@@ -16,6 +17,8 @@
 
         function init() {
             vm.model = {}
+            vm.model = localStorageService.get('settings');
+            vm.settingsCollapsed = true;
         }
 
         function migrate(repoUrl) {
@@ -28,6 +31,10 @@
         function navigate(url) {
             vm.model.rootUrl = url;
             vm.search();
+        }
+
+        function saveSettings() {
+            return localStorageService.set('settings', vm.model);
         }
 
         function search() {

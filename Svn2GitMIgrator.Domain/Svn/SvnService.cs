@@ -38,8 +38,7 @@ namespace Svn2GitMIgrator.Domain.Svn
                 var repoList = new List<SvnRepoInfo>();
                 if(client.GetList(new Uri(_svnRootUrl), out contents))
                 {
-                    repoList = contents.Where(content => !string.IsNullOrEmpty(content.Name) )
-                        .Select(content => new SvnRepoInfo
+                    repoList = contents.Select(content => new SvnRepoInfo
                     {
                         Name = content.Name,
                         Url = content.Uri.AbsoluteUri

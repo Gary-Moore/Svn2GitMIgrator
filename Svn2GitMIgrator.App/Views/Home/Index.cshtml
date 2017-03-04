@@ -3,46 +3,64 @@
     ViewBag.Title = "Home Page";
 }
 <h1>Svn 2 Git Repo Migrator</h1>
-<div ng-app="migrator.svn" ng-controller="SvnRepoController as vm">
+<div ng-app="migrator.svn" ng-controller="SvnRepoController as vm" >
+    <div ng-cloak>
     <div class="row">
         <div class="col-md-12">
-            <form class="form-inline">
+            <button type="button" class="btn btn-default" ng-click="vm.settingsCollapsed = !vm.settingsCollapsed">
+                {{vm.settingsCollapsed ? "Show" : "Hide"}} Settings
+            </button>
+            <button type="submit" class="btn btn-default" ng-click="vm.search()">Search</button>
+        </div>
+    </div>
+    <hr />
+    <div uib-collapse="vm.settingsCollapsed">
+        <div class="well">
+            <form class="form">
                 <div class="form-group">
+                    <label for="rootUrl">SVN Repository Root Url</label>
                     <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" placeholder="SVN Root Url">
                 </div>
                 <div class="form-group">
+                    <label for="rootUrl">SVN Username</label>
                     <input ng-model="vm.model.username" type="text" class="form-control" id="username" placeholder="Username">
                 </div>
                 <div class="form-group">
+                    <label for="rootUrl">SVN Password</label>
                     <input ng-model="vm.model.password" type="password" class="form-control" id="password" placeholder="Password">
                 </div>
-                <button type="submit" class="btn btn-default" ng-click="vm.search()">Search</button>
+                <button type="submit" class="btn btn-default" ng-click="vm.saveSettings()">Save</button>
             </form>
         </div>
-        
     </div>
     
-    <div class="row" ng-show="vm.repos">
-        <div class="col-md-12">
-            <h2>Svn folders</h2>
-            <div class="list-group">
-                <div ng-repeat="repo in vm.repos" class="list-group-item">
-                    <h4>{{repo.Name}}</h4>
-                    <p class="list-group-item-text clearfix">
-                        
-                        <input type="button" class="btn btn-primary pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)"/>
-                        
-                        <button type="button" class="btn btn-default pull-right" ng-click="vm.navigate(repo.Url)">
-                            <i class="glyphicon glyphicon-circle-arrow-down"></i>
-                        </button> 
-                        {{repo.Url}}
-                    </p>
+        <div class="" ng-show="vm.repos">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    SVN Repository Folders
+                </div>
+                <div class="panel-body">
+                    <h3>{{vm.repos[0].Name}}</h3>
+                    <p>{{vm.repos[0].Url}}</p>
+                </div>
+
+                <div class="list-group">
+                    <div ng-repeat="repo in vm.repos" ng-if="$index > 0" class="list-group-item">
+                        <h4>{{repo.Name}}</h4>
+                        <p class="list-group-item-text clearfix">
+
+                            <input type="button" class="btn btn-primary pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)" />
+
+                            <button type="button" class="btn btn-default pull-right" ng-click="vm.navigate(repo.Url)">
+                                <i class="glyphicon glyphicon-circle-arrow-down"></i> Down Level
+                            </button>
+                            {{repo.Url}}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-        
-    </div>
-    
+    </div>    
 </div>
 
 @section scripts{

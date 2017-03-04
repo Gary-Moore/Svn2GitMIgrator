@@ -25,6 +25,8 @@ namespace Svn2GitMIgrator.App
 
             bundles.Add(new ScriptBundle("~/assets/js/angular/bundle").Include(
                         "~/Scripts/angular.js",
+                        "~/Scripts/angular-ui/ui-bootstrap-tpls.js",
+                        "~/Scripts/angular-local-storage.js",
                         "~/Scripts/App/Core/*module.js",
                         "~/Scripts/App/Core/*.js"
                         ));
