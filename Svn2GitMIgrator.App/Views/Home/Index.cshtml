@@ -3,64 +3,84 @@
     ViewBag.Title = "Home Page";
 }
 <h1>Svn 2 Git Repo Migrator</h1>
-<div ng-app="migrator.svn" ng-controller="SvnRepoController as vm" >
+<div ng-app="migrator.svn" ng-controller="SvnRepoController as vm">
     <div ng-cloak>
-    <div class="row">
-        <div class="col-md-12">
-            <button type="button" class="btn btn-default" ng-click="vm.settingsCollapsed = !vm.settingsCollapsed">
-                {{vm.settingsCollapsed ? "Show" : "Hide"}} Settings
-            </button>
-            <button type="submit" class="btn btn-default" ng-click="vm.search()">Search</button>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" ng-click="vm.settingsCollapsed = !vm.settingsCollapsed">
+                            {{vm.settingsCollapsed ? "Show" : "Hide"}} Settings
+                        </button>
+                        <button type="submit" class="btn btn-primary" ng-click="vm.search()">Load Repository</button>
+                        <div class="input-group ">
+                            <input ng-model="vm.searchText" type="text" class="form-control" placeholder="Filter folders">
+                            <div class="input-group-addon btn" ng-click="vm.searchText = ''">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <hr />
-    <div uib-collapse="vm.settingsCollapsed">
-        <div class="well">
-            <form class="form">
-                <div class="form-group">
-                    <label for="rootUrl">SVN Repository Root Url</label>
-                    <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" placeholder="SVN Root Url">
-                </div>
-                <div class="form-group">
-                    <label for="rootUrl">SVN Username</label>
-                    <input ng-model="vm.model.username" type="text" class="form-control" id="username" placeholder="Username">
-                </div>
-                <div class="form-group">
-                    <label for="rootUrl">SVN Password</label>
-                    <input ng-model="vm.model.password" type="password" class="form-control" id="password" placeholder="Password">
-                </div>
-                <button type="submit" class="btn btn-default" ng-click="vm.saveSettings()">Save</button>
-            </form>
+        <br />
+        <div uib-collapse="vm.settingsCollapsed">
+            <div class="well">
+                <form class="form">
+                    <div class="form-group">
+                        <label for="rootUrl">SVN Repository Root Url</label>
+                        <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" placeholder="SVN Root Url">
+                    </div>
+                    <div class="form-group">
+                        <label for="rootUrl">SVN Username</label>
+                        <input ng-model="vm.model.username" type="text" class="form-control short-length" id="username" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="rootUrl">SVN Password</label>
+                        <input ng-model="vm.model.password" type="password" class="form-control short-length" id="password" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-default" ng-click="vm.saveSettings()">Save</button>
+                </form>
+            </div>
         </div>
-    </div>
-    
+
         <div class="" ng-show="vm.repos">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     SVN Repository Folders
                 </div>
                 <div class="panel-body">
-                    <h3>{{vm.repos[0].Name}}</h3>
-                    <p>{{vm.repos[0].Url}}</p>
+                    <h3>Current folder - {{vm.repos[0].Name || 'Root'}}</h3>
                 </div>
 
                 <div class="list-group">
-                    <div ng-repeat="repo in vm.repos" ng-if="$index > 0" class="list-group-item">
+                    <div ng-repeat="repo in vm.repos | filter:vm.searchText" ng-if="$index > 0" class="list-group-item clearfix">
                         <h4>{{repo.Name}}</h4>
-                        <p class="list-group-item-text clearfix">
+                        <p class="list-group-item-text ">
+                            <span class="pull-right">
 
-                            <input type="button" class="btn btn-primary pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)" />
+                                <button type="button" ng-show="vm.repos[0].Name" class="btn btn-default" ng-click="vm.navigateBack(vm.repos[0].Url)">
+                                    <i class="glyphicon glyphicon-circle-arrow-up"></i> Up Level
+                                </button>
+                                
+                                <button type="button" class="btn btn-default" ng-click="vm.navigate(repo.Url)">
+                                    <i class="glyphicon glyphicon-circle-arrow-down"></i> Down Level
+                                </button>
+                                
+                                <button type="button" class="btn btn-primary" ng-click="vm.migrate(repo.Url)" >
+                                    <i class="glyphicon glyphicon-export"></i> Migrate
+                                </button>
 
-                            <button type="button" class="btn btn-default pull-right" ng-click="vm.navigate(repo.Url)">
-                                <i class="glyphicon glyphicon-circle-arrow-down"></i> Down Level
-                            </button>
+                            </span>
+                            
                             {{repo.Url}}
+                            
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 </div>
 
 @section scripts{

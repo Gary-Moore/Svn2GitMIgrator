@@ -12,6 +12,7 @@
         vm.saveSettings = saveSettings;
         vm.migrate = migrate;
         vm.navigate = navigate;
+        vm.navigateBack = navigateBack;
 
         vm.init();
 
@@ -29,6 +30,13 @@
         }
 
         function navigate(url) {
+            vm.model.rootUrl = url;
+            vm.search();
+        }
+
+        function navigateBack(url) {
+            url = url.substring(0, url.lastIndexOf("/"));
+            url = url.substring(0, url.lastIndexOf("/") + 1);
             vm.model.rootUrl = url;
             vm.search();
         }
