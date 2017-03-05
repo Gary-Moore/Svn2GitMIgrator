@@ -26,20 +26,45 @@
         <br />
         <div uib-collapse="vm.settingsCollapsed">
             <div class="well">
-                <form class="form">
-                    <div class="form-group">
-                        <label for="rootUrl">SVN Repository Root Url</label>
-                        <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" placeholder="SVN Root Url">
-                    </div>
-                    <div class="form-group">
-                        <label for="rootUrl">SVN Username</label>
-                        <input ng-model="vm.model.username" type="text" class="form-control short-length" id="username" placeholder="Username">
-                    </div>
-                    <div class="form-group">
-                        <label for="rootUrl">SVN Password</label>
-                        <input ng-model="vm.model.password" type="password" class="form-control short-length" id="password" placeholder="Password">
-                    </div>
-                    <button type="submit" class="btn btn-default" ng-click="vm.saveSettings()">Save</button>
+                <form novalidate name="settingsForm" class="form-horizontal">
+                    <fieldset>
+                        <legend>SVN</legend>
+                        <div class="form-group">
+                            <label for="rootUrl" class="col-sm-2 control-label">Repository Root Url</label>
+                            <div class="col-sm-9">
+                                <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" required placeholder="SVN Root Url">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">Username</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.username" type="text" class="form-control" id="username" required placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-sm-2 control-label">Password</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.password" type="password" class="form-control" id="password" required placeholder="Password">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>GitLab</legend>
+                        <div class="form-group">
+                            <label for="gitLabUrl" class="col-sm-2 control-label">Repository Url</label>
+                            <div class="col-sm-9">
+                                <input ng-model="vm.model.gitLabUrl" type="url" class="form-control" id="gitLabUrl" required placeholder="GitLab Url">
+                            </div>                            
+                        </div>
+                        <div class="form-group">
+                            <label for="privateToken" class="col-sm-2 control-label">Private Token</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.privateToken" type="password" class="form-control" id="privateToken" required placeholder="Private Key">
+                            </div>                            
+                        </div>
+                    </fieldset>
+                    
+                    <button type="submit" class="btn btn-primary" ng-disabled="!settingsForm.$valid" ng-click="vm.saveSettings()">Save</button>
                 </form>
             </div>
         </div>
@@ -67,7 +92,7 @@
                                     <i class="glyphicon glyphicon-circle-arrow-down"></i> Down Level
                                 </button>
                                 
-                                <button type="button" class="btn btn-primary" ng-click="vm.migrate(repo.Url)" >
+                                <button type="button" class="btn btn-primary" ng-click="vm.openMigrateModal(repo.Url)" >
                                     <i class="glyphicon glyphicon-export"></i> Migrate
                                 </button>
 
@@ -81,6 +106,23 @@
             </div>
         </div>
     </div>
+    <script type="text/ng-template" id="migrateRepo.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">Migrate SVN Repo</h3>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form class="form">
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Project Name</label>
+                    <input ng-model="vm.model.gitProjectName" type="text" class="form-control" id="gitProjectName" placeholder="Project name">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="">Continue</button>
+            <button class="btn btn-warning" type="button" ng-click="">Cancel</button>
+        </div>
+    </script>
 </div>
 
 @section scripts{

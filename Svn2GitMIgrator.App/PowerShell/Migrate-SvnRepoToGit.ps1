@@ -12,10 +12,12 @@
     Supply values for the following parameters:
     repoUrl: http://svn-repo.com/myrepo/
     checkoutPath: C:\temp\checkoutfolder
+	password: Password123
+	originUrl: http://GitLab-repo.com/myrepo/
 
     In this example, the script is simply run and the parameters are input as they are mandatory.
 .EXAMPLE
-   Migrate-SvnRepoToGit.ps1 -repoUrl http://svn-repo.com/myrepo/ -checkoutPath C:\temp\checkoutfolder
+   Migrate-SvnRepoToGit.ps1 -repoUrl http://svn-repo.com/myrepo/ -checkoutPath C:\temp\checkoutfolder -password password123 -originUrl http://GitLab.com/repo
 #>
 
 #MigrateSvnRepository.ps1
@@ -29,9 +31,6 @@ Param(
 	[Parameter(Mandatory=$true)][string]$checkoutPath,
 	[Parameter(Mandatory=$true)][string]$username,
 	[Parameter(Mandatory=$true)][string]$password,
-	[Parameter(Mandatory=$true)][string]$projectName,
-	[Parameter(Mandatory=$true)][string]$privatetoken,
-	[Parameter(Mandatory=$true)][string]$gitlabUrl,
 	[Parameter(Mandatory=$true)][string]$originUrl
 )
 
@@ -64,6 +63,3 @@ git add .
 git commit -m 'migration to git'
 $ git push origin --all
 $ git push origin --tags
-
-#$postParams = @{name=$projectName; private_token=$privatetoken; visibility_level=10}
-#Invoke-WebRequest -Uri $gitlabUrl -Method POST -Body $postParams

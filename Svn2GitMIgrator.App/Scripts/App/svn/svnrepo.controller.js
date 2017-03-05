@@ -3,9 +3,9 @@
 
     angular.module('migrator.svn').controller('SvnRepoController', SvnRepoController);
 
-    SvnRepoController.$inject = ['svnService', 'localStorageService'];
+    SvnRepoController.$inject = ['svnService', 'localStorageService', '$uibModal'];
 
-    function SvnRepoController(svnService, localStorageService) {
+    function SvnRepoController(svnService, localStorageService, $uibModal) {
         var vm = this;
         vm.init = init;
         vm.search = search;
@@ -13,6 +13,7 @@
         vm.migrate = migrate;
         vm.navigate = navigate;
         vm.navigateBack = navigateBack;
+        vm.openMigrateModal = openMigrateModal;
 
         vm.init();
 
@@ -39,6 +40,12 @@
             url = url.substring(0, url.lastIndexOf("/") + 1);
             vm.model.rootUrl = url;
             vm.search();
+        }
+
+        function openMigrateModal() {
+            var modalInstance = $uibModal.open({
+                templateUrl: 'migrateRepo.html'
+            });
         }
 
         function saveSettings() {

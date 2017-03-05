@@ -16,7 +16,10 @@
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input.short-length {
-    width: 35%;
+form input.ng-invalid{
+    border-color: #FA787E;
+}
+
+form input.ng-valid {
+    border-color: lightgreen;
 }

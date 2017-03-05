@@ -6,5 +6,9 @@
         public string Password { get; set; }
         public string RootUrl { get; set; }
         public string RepositorylUrl { get; set; }
+
+        public string GitLabUrl { get; set; }
+        public string PrivateToken { get; set; }
+        public string ProjectName { get; set; }
     }
 }
