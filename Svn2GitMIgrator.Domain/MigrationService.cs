@@ -29,15 +29,13 @@ namespace Svn2GitMIgrator.Domain
         {
             var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
+            // create new gitlab project
+            var originUrl = "<gitlab url>";
             LogUniqueUserToFile(request, checkoutPath);
 
-            CloneRepository(request, checkoutPath);
-
-            // create git ignore file
-
-            // create new gitlab project
-
-            // push to new project
+            CloneRepository(request, checkoutPath, originUrl);
+            
+            // Create new TeamCity Configuration
         }
         
         private void LogUniqueUserToFile(SvnRepositoryRequest request, string checkoutPath)
@@ -80,7 +78,7 @@ namespace Svn2GitMIgrator.Domain
             return workingCheckoutDirectoryPath;
         }
 
-        private void CloneRepository(SvnRepositoryRequest request, string checkoutPath)
+        private void CloneRepository(SvnRepositoryRequest request, string checkoutPath, string originUrl)
         {
             var powerScript = new CloneSvnRepository();
             powerScript.AddArgument("repoUrl", request.RepositorylUrl);
@@ -88,12 +86,14 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("username", request.Username);
             powerScript.AddArgument("password", request.Password);
 
-            powerScript.AddArgument("projectName", "PapersLaid.Admin");
-            powerScript.AddArgument("privatetoken", "iac_MyKnRhxXH1ZxWfEp");
-            powerScript.AddArgument("gitlabUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com");
-            powerScript.AddArgument("originUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/PapersLaid.Admin.git");
-
-
+            powerScript.AddArgument("projectName", request.ProjectName);
+            powerScript.AddArgument("privatetoken", request.PrivateToken);
+            //powerScript.AddArgument("privatetoken", "iac_MyKnRhxXH1ZxWfEp");
+            powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
+            //powerScript.AddArgument("gitlabUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com");
+            powerScript.AddArgument("originUrl", originUrl);
+            //powerScript.AddArgument("originUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/PapersLaid.Admin.git");
+            
             powerScript.Execute();
         }
     }

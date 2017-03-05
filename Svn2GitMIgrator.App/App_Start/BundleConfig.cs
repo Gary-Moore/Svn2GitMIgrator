@@ -24,6 +24,7 @@ namespace Svn2GitMIgrator.App
                       "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/assets/js/angular/bundle").Include(
+                        "~/Scripts/toastr.js",
                         "~/Scripts/angular.js",
                         "~/Scripts/angular-ui/ui-bootstrap-tpls.js",
                         "~/Scripts/angular-local-storage.js",
@@ -38,6 +39,7 @@ namespace Svn2GitMIgrator.App
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/toastr.css",
                       "~/Content/site.css"));
         }
     }

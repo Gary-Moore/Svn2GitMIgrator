@@ -69,6 +69,7 @@
     <Compile Include="Git\GitLabService.cs" />
     <Compile Include="IMigrationService.cs" />
     <Compile Include="MigrationService.cs" />
+    <Compile Include="SvnMigrationExceprion.cs" />
     <Compile Include="Svn\User.cs" />
     <Compile Include="TaskAutomation\PowershellScript.cs" />
     <Compile Include="Svn\ISvnService.cs" />

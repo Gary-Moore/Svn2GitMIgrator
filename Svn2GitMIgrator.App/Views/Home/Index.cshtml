@@ -75,7 +75,15 @@
                     SVN Repository Folders
                 </div>
                 <div class="panel-body">
-                    <h3>Current folder - {{vm.repos[0].Name || 'Root'}}</h3>
+                    <div class="col-sm-9">
+                        <h3>Current folder - {{vm.repos[0].Name || 'Root'}}</h3>
+                    </div>
+                    
+                    <span class="pull-right">
+                        <button type="button" ng-show="vm.repos[0].Name" class="btn btn-default" ng-click="vm.navigateBack(vm.repos[0].Url)">
+                            <i class="glyphicon glyphicon-circle-arrow-up"></i> Up Level
+                        </button>
+                    </span>
                 </div>
 
                 <div class="list-group">

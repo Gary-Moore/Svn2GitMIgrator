@@ -49,12 +49,18 @@
         }
 
         function saveSettings() {
-            return localStorageService.set('settings', vm.model);
+            if(localStorageService.set('settings', vm.model)){
+                toastr.success('Settings updated');
+            }
         }
 
         function search() {
             svnService.search(vm.model).then(function (result) {
-                vm.repos = result;
+                if (!result.Error) {
+                    vm.repos = result.Data;
+                } else {
+                    toastr.error(result.Message, "Error retrieving repo info:");
+                }                
             });
 
         }

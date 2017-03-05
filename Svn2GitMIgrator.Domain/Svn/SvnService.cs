@@ -32,21 +32,28 @@ namespace Svn2GitMIgrator.Domain.Svn
         {
             SetCredentials(request);
 
-            using (var client = GetSvnClient())
+            try
             {
-                Collection<SvnListEventArgs> contents;
-                var repoList = new List<SvnRepoInfo>();
-                if(client.GetList(new Uri(_svnRootUrl), out contents))
+                using (var client = GetSvnClient())
                 {
-                    repoList = contents.Select(content => new SvnRepoInfo
+                    Collection<SvnListEventArgs> contents;
+                    var repoList = new List<SvnRepoInfo>();
+                    if (client.GetList(new Uri(_svnRootUrl), out contents))
                     {
-                        Name = content.Name,
-                        Url = content.Uri.AbsoluteUri
-                    }).ToList();
-                }
+                        repoList = contents.Select(content => new SvnRepoInfo
+                        {
+                            Name = content.Name,
+                            Url = content.Uri.AbsoluteUri
+                        }).ToList();
+                    }
 
-                return repoList;
+                    return repoList;
+                }
             }
+            catch (SvnRepositoryIOException ex)
+            {
+                throw new SvnMigrationExceprion(ex.Message, ex); ;
+            }            
         }
 
         public string Checkout(SvnRepositoryRequest request)
@@ -54,13 +61,19 @@ namespace Svn2GitMIgrator.Domain.Svn
             SetCredentials(request);
             var workingCheckoutDirectoryPath = SetWorkingCheckoutDirectoryPath(request.RepositorylUrl);
 
-            using (var client = GetSvnClient())
+            try
             {
-                var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                client.CheckOut(repoUrl, workingCheckoutDirectoryPath);
-                client.Upgrade(workingCheckoutDirectoryPath);
+                using (var client = GetSvnClient())
+                {
+                    var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
+                    client.CheckOut(repoUrl, workingCheckoutDirectoryPath);
+                    client.Upgrade(workingCheckoutDirectoryPath);
+                }
             }
-
+            catch (SvnRepositoryIOException ex)
+            {
+                throw new SvnMigrationExceprion(ex.Message, ex); ;
+            }
             return workingCheckoutDirectoryPath;
         }
 
@@ -68,12 +81,19 @@ namespace Svn2GitMIgrator.Domain.Svn
         {
             var authors = new List<string>();
             SetCredentials(request);
-            using (var client = GetSvnClient())
+            try
             {
-                var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                client.Log(repoUrl.Uri, (o, e) => {
-                    authors.Add(e.Author);
-                });
+                using (var client = GetSvnClient())
+                {
+                    var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
+                    client.Log(repoUrl.Uri, (o, e) => {
+                        authors.Add(e.Author);
+                    });
+                }
+            }
+            catch (SvnRepositoryIOException ex)
+            {
+                throw new SvnMigrationExceprion(ex.Message, ex); ;
             }
 
             return authors.Distinct();
@@ -93,6 +113,19 @@ namespace Svn2GitMIgrator.Domain.Svn
 
         private void SetCredentials(SvnRepositoryRequest request)
         {
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                throw new SvnMigrationExceprion("A SVN password wasn't provided");
+            }
+            if (string.IsNullOrEmpty(request.RootUrl))
+            {
+                throw new SvnMigrationExceprion("A SVN Repository Url wasn't provided");
+            }
+            if (string.IsNullOrEmpty(request.Username))
+            {
+                throw new SvnMigrationExceprion("A SVN Username wasn't provided");
+            }
+            
             _svnPassword = request.Password;
             _svnRootUrl = request.RootUrl;
             _svnUsername = request.Username;

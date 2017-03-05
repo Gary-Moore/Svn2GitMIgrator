@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Svn2GitMIgrator.Domain.Svn;
-using System.Security.AccessControl;
-using System.Threading;
 
 namespace Svn2GitMIgrator.Domain.FileSystem
 {

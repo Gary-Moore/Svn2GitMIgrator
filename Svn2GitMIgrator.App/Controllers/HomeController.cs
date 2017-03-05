@@ -1,8 +1,8 @@
-﻿using Svn2GitMIgrator.App.Models;
-using Svn2GitMIgrator.Domain.Svn;
+﻿using Svn2GitMIgrator.Domain.Svn;
 using System.Linq;
 using System.Web.Mvc;
 using Svn2GitMIgrator.Domain;
+using Svn2GitMIgrator.App.Models;
 
 namespace Svn2GitMIgrator.App.Controllers
 {
@@ -25,15 +25,36 @@ namespace Svn2GitMIgrator.App.Controllers
         [HttpPost]
         public ActionResult MigrateRepo(SvnRepositoryRequest request)
         {
-            _migrationService.Migrate(request);
-            return new EmptyResult();
+            WebResult result = new WebResult();
+            try
+            {
+                _migrationService.Migrate(request);
+            }
+            catch (SvnMigrationExceprion ex)
+            {
+                result.Error = true;
+                result.Message = ex.Message;
+            }
+            
+            return Json(result);
         }
 
         [HttpPost]
         public ActionResult Search(SvnRepositoryRequest request)
         {
-            var data = _svnService.GetRepoList(request).ToList();
-            return Json(data);
+            WebResult result = new WebResult();
+            try
+            {
+                var data = _svnService.GetRepoList(request).ToList();
+                result.Data = data;
+            }
+            catch (SvnMigrationExceprion ex)
+            {
+                result.Error = true;
+                result.Message = ex.Message;
+            }
+            
+            return Json(result);
         }
     }
 }
