@@ -77,7 +77,7 @@
     <Compile Include="Svn\SvnService.cs" />
     <Compile Include="Svn\SvnRepoInfo.cs" />
     <Compile Include="Svn\SvnRepositoryRequest.cs" />
-    <Compile Include="TaskAutomation\CloneSvnRepository.cs" />
+    <Compile Include="TaskAutomation\MigrateToGitRepository.cs" />
     <Compile Include="Svn\KnownUserList.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -188,6 +188,7 @@
     <Content Include="Content\toastr.less" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\App\core\core.module.js" />
+    <Content Include="Scripts\App\svn\migrationmodal.controller.js" />
     <Content Include="Scripts\App\svn\svn.module.js" />
     <Content Include="Scripts\App\svn\svn.service.js" />
     <Content Include="Scripts\App\svn\svnrepo.controller.js" />

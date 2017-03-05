@@ -20,7 +20,7 @@
    Migrate-SvnRepoToGit.ps1 -repoUrl http://svn-repo.com/myrepo/ -checkoutPath C:\temp\checkoutfolder -password password123 -originUrl http://GitLab.com/repo
 #>
 
-#MigrateSvnRepository.ps1
+#Migrate-SvnRepoToGit.ps1
 #Gary Moore
 #04 March, 2017
 #Updated
@@ -57,6 +57,9 @@ Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origi
 
 # add origin remote to GitLab central repo server 
 git remote add origin $originUrl
+
+# removed cached files an then add to aloow the .gitignore file to be applied (remove packages folder etc.)
+git rm -r --cached .
 
 # add all files, commit and push everything to origin
 git add .

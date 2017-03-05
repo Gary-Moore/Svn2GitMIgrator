@@ -10,7 +10,6 @@
         vm.init = init;
         vm.search = search;
         vm.saveSettings = saveSettings;
-        vm.migrate = migrate;
         vm.navigate = navigate;
         vm.navigateBack = navigateBack;
         vm.openMigrateModal = openMigrateModal;
@@ -22,14 +21,7 @@
             vm.model = localStorageService.get('settings');
             vm.settingsCollapsed = true;
         }
-
-        function migrate(repoUrl) {
-            vm.model.repositorylUrl = repoUrl;
-            svnService.migrate(vm.model).then(function(result) {
-                
-            });
-        }
-
+               
         function navigate(url) {
             vm.model.rootUrl = url;
             vm.search();
@@ -42,9 +34,17 @@
             vm.search();
         }
 
-        function openMigrateModal() {
+        function openMigrateModal(repoUrl) {
+            vm.model.repositorylUrl = repoUrl;
             var modalInstance = $uibModal.open({
-                templateUrl: 'migrateRepo.html'
+                templateUrl: 'migrateRepo.html',
+                controller: 'MigrationModalController',
+                controllerAs: 'vm',
+                resolve: {
+                    model: function () {
+                        return vm.model;
+                    }
+                }
             });
         }
 

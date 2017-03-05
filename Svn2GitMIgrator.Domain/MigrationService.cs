@@ -80,7 +80,7 @@ namespace Svn2GitMIgrator.Domain
 
         private void CloneRepository(SvnRepositoryRequest request, string checkoutPath, string originUrl)
         {
-            var powerScript = new CloneSvnRepository();
+            var powerScript = new MigrateToGitRepository();
             powerScript.AddArgument("repoUrl", request.RepositorylUrl);
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
