@@ -52,7 +52,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             }
             catch (SvnRepositoryIOException ex)
             {
-                throw new SvnMigrationExceprion(ex.Message, ex); ;
+                throw new SvnMigrationException(ex.Message, ex); ;
             }            
         }
 
@@ -72,7 +72,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             }
             catch (SvnRepositoryIOException ex)
             {
-                throw new SvnMigrationExceprion(ex.Message, ex); ;
+                throw new SvnMigrationException(ex.Message, ex); ;
             }
             return workingCheckoutDirectoryPath;
         }
@@ -93,7 +93,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             }
             catch (SvnRepositoryIOException ex)
             {
-                throw new SvnMigrationExceprion(ex.Message, ex); ;
+                throw new SvnMigrationException(ex.Message, ex); ;
             }
 
             return authors.Distinct();
@@ -115,15 +115,15 @@ namespace Svn2GitMIgrator.Domain.Svn
         {
             if (string.IsNullOrEmpty(request.Password))
             {
-                throw new SvnMigrationExceprion("A SVN password wasn't provided");
+                throw new SvnMigrationException("A SVN password wasn't provided");
             }
             if (string.IsNullOrEmpty(request.RootUrl))
             {
-                throw new SvnMigrationExceprion("A SVN Repository Url wasn't provided");
+                throw new SvnMigrationException("A SVN Repository Url wasn't provided");
             }
             if (string.IsNullOrEmpty(request.Username))
             {
-                throw new SvnMigrationExceprion("A SVN Username wasn't provided");
+                throw new SvnMigrationException("A SVN Username wasn't provided");
             }
             
             _svnPassword = request.Password;

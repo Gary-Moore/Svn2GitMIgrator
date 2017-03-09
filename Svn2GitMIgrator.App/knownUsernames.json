@@ -23,6 +23,46 @@
     {
       "svnname": "jonesn",
       "author": "Nick Jones"
+    },
+    {
+      "svnname": "eglina",
+      "author": "Ashley Eglin"
+    },
+    {
+      "svnname": "lackd",
+      "author": "Dan Lack"
+    },
+    {
+      "svnname": "oliverr",
+      "author": "Richard Oliver"
+    },
+    {
+      "svnname": "skynet",
+      "author": "Skynet Solution Builder"
+    },
+    {
+      "svnname": "kellyt",
+      "author": "Tom Kelly"
+    },
+    {
+      "svnname": "brooksbankc",
+      "author": "Chris Brooksbank"
+    },
+    {
+      "svnname": "adefioyea",
+      "author": "Ade adefioye"
+    },
+    {
+      "svnname": "tatapudiv",
+      "author": "Vaidehi Tatapudi"
+    },
+    {
+      "svnname": "hayters",
+      "author": "Steve Hayter"
+    },
+    {
+      "svnname": "wortha",
+      "author": "Andrew Worth"
     }
   ]
 }

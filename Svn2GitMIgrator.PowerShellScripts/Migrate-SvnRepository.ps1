@@ -42,7 +42,7 @@ Write-Output "Cloning SVN repository into Git folder"
 echo $password | git svn clone $repoUrl --username $username --no-metadata -A $checkoutPath/authors-transform.txt -t tags/* -b releases/* -T trunk $checkoutPath/repo
 
 # Download visual studio .gitignore file into repository folder from github
-#Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $checkoutPath/repo/.gitignore
+Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $checkoutPath/repo/.gitignore
 
 # Cleanup - convert git svn remote tags into real (lightweight) Git tags
 cd $checkoutPath/repo

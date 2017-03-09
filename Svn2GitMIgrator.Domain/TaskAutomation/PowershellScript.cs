@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Text;
 
 namespace Svn2GitMIgrator.Domain.TaskAutomation
 {
@@ -11,11 +13,16 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
     {
         protected abstract string Name { get; }
         private ICollection<KeyValuePair<string, string>> ArgumentsList { get; }
-        protected const string ScriptFolderName = "PowerShellScripts";
+
+        protected readonly string ScriptFolderPath;
+
+        public List<string> ErrorMessages { get; }
 
         protected PowershellScript()
         {
             ArgumentsList = new List<KeyValuePair<string, string>>();
+            ScriptFolderPath = ConfigurationManager.AppSettings["PowerShellDirectory"];
+            ErrorMessages = new List<string>();
         }
 
         public PSCommand Create()
@@ -35,11 +42,12 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
 
         protected string ResolveFilePath()
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "PowerShell", Name);
+            return Path.Combine(ScriptFolderPath, Name);
         }
 
-        public void Execute()
+        public ScriptExecutionResult Execute()
         {
+            var result = new ScriptExecutionResult();
             RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
 
             Runspace runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
@@ -65,21 +73,26 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
                 {
                     if (outputItem != null)
                     {
-                        Console.WriteLine(outputItem.BaseObject.GetType().FullName);
-                        Console.WriteLine(outputItem.BaseObject + "\n");
+                        result.Messages.Add(outputItem.BaseObject.ToString());
                     }
                 }
-
-                // log any errors
+                
                 var errorStream = powershell.Streams.Error;
                 if (errorStream.Count > 0)
                 {
+                    result.Suceess = false;
                     foreach (var error in errorStream)
                     {
-                        Console.WriteLine(error + "\n");
+                        result.Messages.Add(error.ToString());
                     }
                 }
+                else
+                {
+                    result.Suceess = true;
+                }
             }
+
+            return result;
         }
     }
 }

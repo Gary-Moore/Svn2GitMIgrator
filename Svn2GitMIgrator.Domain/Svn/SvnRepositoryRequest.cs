@@ -9,6 +9,8 @@
 
         public string GitLabUrl { get; set; }
         public string PrivateToken { get; set; }
-        public string ProjectName { get; set; }
+        public string NamespaceId { get; set; }
+        public string GitProjectName { get; set; }
+        public string GitProjectPath { get; set; }
     }
 }

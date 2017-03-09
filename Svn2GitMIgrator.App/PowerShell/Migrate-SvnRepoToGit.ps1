@@ -44,12 +44,9 @@ echo $password | git svn clone $repoUrl --username $username --no-metadata -A $c
 # Download visual studio .gitignore file into repository folder from github
 Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $checkoutPath/repo/.gitignore
 
-# Add README.ME file
-"# Project Name" >> README.md
-
 # Cleanup - convert git svn remote tags into real (lightweight) Git tags
 cd $checkoutPath/repo
-Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origin/tags){
+Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origin){
 	# strip off excess tag paths, i.e. /origin/tags/1.0.0 becomes 1.0.0
     $tagName = [regex]::match($tag,'[^/\/]+$').Groups[0].Value 
 	# create proper tag
@@ -58,8 +55,12 @@ Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origi
 	git branch -D -r $tag
 }
 
+# remove redundant 'trunk' tag
+git tag -d trunk
+
 # add origin remote to GitLab central repo server 
-git remote add origin $originUrl
+git remote add origin http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/ETabling.git
+
 
 # removed cached files an then add to aloow the .gitignore file to be applied (remove packages folder etc.)
 git rm -r --cached .
@@ -67,5 +68,5 @@ git rm -r --cached .
 # add all files, commit and push everything to origin
 git add .
 git commit -m 'migration to git'
-$ git push origin --all
-$ git push origin --tags
+git push origin --all
+git push origin --tags

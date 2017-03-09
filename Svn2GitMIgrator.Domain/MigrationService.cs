@@ -27,13 +27,15 @@ namespace Svn2GitMIgrator.Domain
 
         public void Migrate(SvnRepositoryRequest request)
         {
+
+            CreateGitLabProject(request);
             var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
             // create new gitlab project
             var originUrl = "<gitlab url>";
             LogUniqueUserToFile(request, checkoutPath);
 
-            CloneRepository(request, checkoutPath, originUrl);
+            //CloneRepository(request, checkoutPath, originUrl);
             
             // Create new TeamCity Configuration
         }
@@ -78,6 +80,18 @@ namespace Svn2GitMIgrator.Domain
             return workingCheckoutDirectoryPath;
         }
 
+        private ScriptExecutionResult CreateGitLabProject(SvnRepositoryRequest request)
+        {
+            var powerScript = new CreateGitLabProject();
+            powerScript.AddArgument("projectname", request.GitProjectName);
+            powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
+            powerScript.AddArgument("path", request.GitProjectPath);
+            powerScript.AddArgument("namespaceid", request.NamespaceId);
+            powerScript.AddArgument("privatetoken", request.PrivateToken);
+
+            return powerScript.Execute();
+        } 
+
         private void CloneRepository(SvnRepositoryRequest request, string checkoutPath, string originUrl)
         {
             var powerScript = new MigrateToGitRepository();
@@ -85,11 +99,10 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
             powerScript.AddArgument("password", request.Password);
-
-            powerScript.AddArgument("projectName", request.ProjectName);
-            powerScript.AddArgument("privatetoken", request.PrivateToken);
+            
+            //powerScript.AddArgument("privatetoken", request.PrivateToken);
             //powerScript.AddArgument("privatetoken", "iac_MyKnRhxXH1ZxWfEp");
-            powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
+            //powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
             //powerScript.AddArgument("gitlabUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com");
             powerScript.AddArgument("originUrl", originUrl);
             //powerScript.AddArgument("originUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/PapersLaid.Admin.git");

@@ -26,14 +26,21 @@
 ##Paramaters
 Param(
 	[Parameter(Mandatory=$true)][string]$projectName,
+	[Parameter(Mandatory=$true)][string]$path,
 	[Parameter(Mandatory=$true)][string]$privatetoken,
-	[Parameter(Mandatory=$true)][string]$gitlabUrl
+	[Parameter(Mandatory=$true)][string]$gitlabUrl,
+	[Parameter(Mandatory=$true)][string]$namespaceid
 )
 
-#Variables
+# Variables
+$createProjectUrl = $gitlabUrl + "/v3/projects"
 
 Write-Output "Creating new GitLab project"
 
 # Create new project inside GitLab repo
-$postParams = @{name=$projectName; private_token=$privatetoken; visibility_level=10}
-Invoke-WebRequest -Uri $gitlabUrl -Method POST -Body $postParams
+$postParams = @{name=$projectName; namespace_id=$namespaceid; visibility="private"; path=$path; private_token=$privatetoken}
+$response = Invoke-WebRequest -Uri $createProjectUrl -Method POST -Body $postParams
+
+Write-Output $response
+
+Write-Output "Project created"
