@@ -30,7 +30,7 @@ namespace Svn2GitMIgrator.App.Controllers
             {
                 _migrationService.Migrate(request);
             }
-            catch (SvnMigrationExceprion ex)
+            catch (SvnMigrationException ex)
             {
                 result.Error = true;
                 result.Message = ex.Message;
@@ -48,7 +48,7 @@ namespace Svn2GitMIgrator.App.Controllers
                 var data = _svnService.GetRepoList(request).ToList();
                 result.Data = data;
             }
-            catch (SvnMigrationExceprion ex)
+            catch (SvnMigrationException ex)
             {
                 result.Error = true;
                 result.Message = ex.Message;
