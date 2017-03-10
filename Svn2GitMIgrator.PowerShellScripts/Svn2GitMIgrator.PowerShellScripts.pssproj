@@ -28,6 +28,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Create-NewGitLabRepo.ps1" />
+    <Compile Include="Log-SvnRepoistoryFolders.ps1" />
     <Compile Include="Migrate-SvnRepository.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
