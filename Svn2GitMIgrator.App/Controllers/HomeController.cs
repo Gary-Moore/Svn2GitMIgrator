@@ -23,7 +23,7 @@ namespace Svn2GitMIgrator.App.Controllers
         }
 
         [HttpPost]
-        public ActionResult MigrateRepo(SvnRepositoryRequest request)
+        public ActionResult MigrateRepo(GitMigrationRequest request)
         {
             WebResult result = new WebResult();
             try

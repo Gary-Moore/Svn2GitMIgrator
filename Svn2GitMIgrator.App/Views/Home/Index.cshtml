@@ -62,12 +62,6 @@
                                 <input ng-model="vm.model.privateToken" type="password" class="form-control" id="privateToken" required placeholder="Private Key">
                             </div>                            
                         </div>
-                        <div class="form-group">
-                            <label for="namespaceid" class="col-sm-2 control-label">Group Namespace Id</label>
-                            <div class="col-sm-4">
-                                <input ng-model="vm.model.namespaceid" type="number" class="form-control" id="namespaceid" required placeholder="Group Namespace Id">
-                            </div>
-                        </div>
                     </fieldset>
                     
                     <button type="submit" class="btn btn-primary" ng-disabled="!settingsForm.$valid" ng-click="vm.saveSettings()">Save</button>
@@ -126,6 +120,14 @@
         </div>
         <div class="modal-body" id="modal-body">
             <form class="form">
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Group Name</label>
+                    <input ng-model="vm.model.gitGroupName" type="text" class="form-control" id="gitGroupName" placeholder="Group name">
+                </div>
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Group Path</label>
+                    <input ng-model="vm.model.gitGroupPath" type="text" class="form-control" id="gitGroupPath" placeholder="Group path">
+                </div>
                 <div class="form-group">
                     <label for="rootUrl">GitLab Project Name</label>
                     <input ng-model="vm.model.gitProjectName" type="text" class="form-control" id="gitProjectName" placeholder="Project name">

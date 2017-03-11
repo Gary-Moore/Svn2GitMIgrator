@@ -25,10 +25,10 @@ namespace Svn2GitMIgrator.Domain
             }
         }
 
-        public void Migrate(SvnRepositoryRequest request)
+        public void Migrate(GitMigrationRequest request)
         {
-
-            CreateGitLabProject(request);
+            CreateGitLabGroup(request);
+           // CreateGitLabProject(request, "");
             var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
             // create new gitlab project
@@ -40,7 +40,7 @@ namespace Svn2GitMIgrator.Domain
             // Create new TeamCity Configuration
         }
         
-        private void LogUniqueUserToFile(SvnRepositoryRequest request, string checkoutPath)
+        private void LogUniqueUserToFile(GitMigrationRequest request, string checkoutPath)
         {
             var filePath = FileSystemHelper.GetFilePath("knownUsernames.json");
             var knownUsers = JsonConvert.DeserializeObject<KnownUserList>(File.ReadAllText(filePath));
@@ -80,19 +80,30 @@ namespace Svn2GitMIgrator.Domain
             return workingCheckoutDirectoryPath;
         }
 
-        private ScriptExecutionResult CreateGitLabProject(SvnRepositoryRequest request)
+        private ScriptExecutionResult CreateGitLabProject(GitMigrationRequest request, string groupId)
         {
             var powerScript = new CreateGitLabProject();
             powerScript.AddArgument("projectname", request.GitProjectName);
             powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
             powerScript.AddArgument("path", request.GitProjectPath);
-            powerScript.AddArgument("namespaceid", request.NamespaceId);
+            powerScript.AddArgument("namespaceid", groupId);
             powerScript.AddArgument("privatetoken", request.PrivateToken);
 
             return powerScript.Execute();
         } 
 
-        private void CloneRepository(SvnRepositoryRequest request, string checkoutPath, string originUrl)
+        private ScriptExecutionResult CreateGitLabGroup(GitMigrationRequest request)
+        {
+            var powerScript = new CreateGitLabGroup();
+            powerScript.AddArgument("groupname", request.GitProjectName);
+            powerScript.AddArgument("grouppath", request.GitProjectName);
+            powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
+            powerScript.AddArgument("privatetoken", request.PrivateToken);
+
+            return powerScript.Execute();
+        }
+
+        private void CloneRepository(GitMigrationRequest request, string checkoutPath, string originUrl)
         {
             var powerScript = new MigrateToGitRepository();
             powerScript.AddArgument("repoUrl", request.RepositorylUrl);
