@@ -8,7 +8,6 @@
     function MigrationModalController($uibModalInstance, svnService, model) {
         var vm = this;
         vm.model = model;
-
         vm.cancel = cancel;
         vm.migrate = migrate;
 
@@ -18,9 +17,7 @@
 
         function migrate() {
             
-            svnService.migrate(vm.model).then(function(result) {
-                
-            });
+            $uibModalInstance.close(model);
         }
     }
 })();

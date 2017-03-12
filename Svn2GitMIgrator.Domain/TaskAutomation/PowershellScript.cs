@@ -13,13 +13,14 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
     {
         protected abstract string Name { get; }
         private ICollection<KeyValuePair<string, string>> ArgumentsList { get; }
-
+        private Action<string> _callback;
         protected readonly string ScriptFolderPath;
 
-        protected PowershellScript()
+        protected PowershellScript(Action<string> callback)
         {
             ArgumentsList = new List<KeyValuePair<string, string>>();
             ScriptFolderPath = ConfigurationManager.AppSettings["PowerShellDirectory"];
+            _callback = callback;
         }
 
         public PSCommand Create()
@@ -73,14 +74,14 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
                         result.Outputs.Add(outputItem.BaseObject);
                     }
                 }
-                
+
                 var errorStream = powershell.Streams.Error;
                 if (errorStream.Count > 0)
                 {
                     result.Suceess = false;
                     foreach (var error in errorStream)
                     {
-                        result.Messages.Add(error.ToString());
+                        result.ErrorMessages.Add(error.ToString());
                     }
                 }
                 else
@@ -91,5 +92,83 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
 
             return result;
         }
+
+        public ScriptExecutionResult ExecuteAync()
+        {
+            var result = new ScriptExecutionResult();
+            RunspaceConfiguration runspaceConfiguration = RunspaceConfiguration.Create();
+
+            Runspace runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
+            runspace.Open();
+
+            using (PowerShell powershell = PowerShell.Create())
+            {
+                powershell.Runspace = runspace;
+                PSCommand pscommand = new PSCommand();
+
+                PSDataCollection<PSObject> outputCollection = new PSDataCollection<PSObject>();
+                outputCollection.DataAdded += outputCollection_DataAdded;
+                powershell.Streams.Error.DataAdded += Error_DataAdded;
+
+                var command = new Command(ResolveFilePath());
+                // add the arguments
+                foreach (var parameter in ArgumentsList)
+                {
+                    command.Parameters.Add(parameter.Key, parameter.Value);
+                }
+
+                powershell.Commands = pscommand.AddCommand(command);
+
+                IAsyncResult ayncresult = powershell.BeginInvoke<PSObject, PSObject>(null, outputCollection);
+
+                foreach (PSObject outputItem in outputCollection)
+                {
+                    if (outputItem != null)
+                    {
+                        result.Outputs.Add(outputItem.BaseObject);
+                    }
+                }
+                
+                var errorStream = powershell.Streams.Error;
+                if (errorStream.Count > 0)
+                {
+                    result.Suceess = false;
+                    foreach (var error in errorStream)
+                    {
+                        result.ErrorMessages.Add(error.ToString());
+                    }
+                }
+                else
+                {
+                    result.Suceess = true;
+                }
+            }
+
+            return result;
+        }
+
+        private void outputCollection_DataAdded(object sender, DataAddedEventArgs e)
+        {
+            PSDataCollection<PSObject> myp = (PSDataCollection<PSObject>)sender;
+           
+            Collection<PSObject> results = myp.ReadAll();
+            foreach (PSObject result in results)
+            {
+                _callback(result.ToString());
+            }
+        }
+
+        private void Error_DataAdded(object sender, DataAddedEventArgs e)
+        {
+            PSDataCollection<ErrorRecord> myp = (PSDataCollection<ErrorRecord>)sender;
+
+            Collection<ErrorRecord> errors = myp.ReadAll();
+            foreach (ErrorRecord error in errors) 
+            {
+                _callback(error.ToString());
+            }
+        }
+
     }
 }
+

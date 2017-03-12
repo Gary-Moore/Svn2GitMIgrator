@@ -69,6 +69,22 @@
             </div>
         </div>
 
+        <div ng-show="vm.showProgress">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Migration Progress
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <textarea ng-model="vm.messages" class="form-control" rows="10"></textarea>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
         <div class="" ng-show="vm.repos">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -119,7 +135,7 @@
             <h3 class="modal-title" id="modal-title">Migrate SVN Repo</h3>
         </div>
         <div class="modal-body" id="modal-body">
-            <form class="form">
+            <form class="form" ng-hide="vm.showProgress">
                 <div class="form-group">
                     <label for="rootUrl">GitLab Group Name</label>
                     <input ng-model="vm.model.gitGroupName" type="text" class="form-control" id="gitGroupName" placeholder="Group name">

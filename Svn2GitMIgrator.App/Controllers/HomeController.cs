@@ -31,7 +31,7 @@ namespace Svn2GitMIgrator.App.Controllers
             WebResult result = new WebResult();
             try
             {
-                _migrationService.Migrate(request);
+                _migrationService.Migrate(request, NotifyUpdates);
             }
             catch (SvnMigrationException ex)
             {
@@ -60,13 +60,12 @@ namespace Svn2GitMIgrator.App.Controllers
             return Json(result);
         }
 
-        public  void NotifyUpdates(string message)
+        public void NotifyUpdates(string message)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<MigrationHub>();
             if (hubContext != null)
             {
-               // var stats = await this.GenerateStatistics();
-                hubContext.Clients.All.ProgressUpdate(message);
+               hubContext.Clients.All.progress(message);
             }
         }
     }

@@ -26,24 +26,46 @@ namespace Svn2GitMIgrator.Domain
             }
         }
 
-        public void Migrate(GitMigrationRequest request)
+        public void Migrate(GitMigrationRequest request, Action<string> callback)
         {
-            var createGroupResult = CreateGitLabGroup(request);
+            callback("Creating group: " + request.GitGroupName + Environment.NewLine);
+            var createGroupResult = CreateGitLabGroup(request, callback);
             if (createGroupResult)
             {
+                callback("Creating project: " + request.GitProjectName + Environment.NewLine);
                 var groupId = createGroupResult.Outputs.FirstOrDefault().ToString();
-                var createProjectResult = CreateGitLabProject(request, groupId);
+                var createProjectResult = CreateGitLabProject(request, groupId, callback);
 
                 if (createProjectResult)
                 {
                     var originUrl = ExtractGitOriginUrl(createProjectResult.Outputs.FirstOrDefault().ToString(), request.GitLabUrl);
+                    callback("Created origin at : " + originUrl + Environment.NewLine);
+
                     var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
                     // create new gitlab project
                     LogUniqueUserToFile(request, checkoutPath);
-
-                    CloneRepository(request, checkoutPath, originUrl);
+                    callback("Migrating repository" + Environment.NewLine);
+                    CloneRepository(request, checkoutPath, originUrl, callback);
                 }
+                else
+                {
+                    callback("Error creating project:" + Environment.NewLine);
+                    OutputErrors(createProjectResult, callback);
+                }
+            }
+            else
+            {
+                callback("Error creating group:" + Environment.NewLine);
+                OutputErrors(createGroupResult, callback);
+            }
+        }
+
+        private void OutputErrors(ScriptExecutionResult result, Action<string> errorCallback)
+        {
+            foreach (var error in result.ErrorMessages)
+            {
+                errorCallback(error + Environment.NewLine);
             }
         }
 
@@ -96,9 +118,9 @@ namespace Svn2GitMIgrator.Domain
             return workingCheckoutDirectoryPath;
         }
 
-        private ScriptExecutionResult CreateGitLabProject(GitMigrationRequest request, string groupId)
+        private ScriptExecutionResult CreateGitLabProject(GitMigrationRequest request, string groupId, Action<string> callback)
         {
-            var powerScript = new CreateGitLabProject();
+            var powerScript = new CreateGitLabProject(callback);
             powerScript.AddArgument("projectname", request.GitProjectName);
             powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
             powerScript.AddArgument("path", request.GitProjectPath);
@@ -108,9 +130,9 @@ namespace Svn2GitMIgrator.Domain
             return powerScript.Execute();
         } 
 
-        private ScriptExecutionResult CreateGitLabGroup(GitMigrationRequest request)
+        private ScriptExecutionResult CreateGitLabGroup(GitMigrationRequest request, Action<string> callback)
         {
-            var powerScript = new CreateGitLabGroup();
+            var powerScript = new CreateGitLabGroup(callback);
             powerScript.AddArgument("groupname", request.GitGroupName);
             powerScript.AddArgument("groupPath", request.GitGroupPath);
             powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
@@ -119,9 +141,9 @@ namespace Svn2GitMIgrator.Domain
             return powerScript.Execute();
         }
 
-        private ScriptExecutionResult CloneRepository(GitMigrationRequest request, string checkoutPath, string originUrl)
+        private ScriptExecutionResult CloneRepository(GitMigrationRequest request, string checkoutPath, string originUrl, Action<string> callback)
         {
-            var powerScript = new MigrateToGitRepository();
+            var powerScript = new MigrateToGitRepository(callback);
             powerScript.AddArgument("repoUrl", request.RepositorylUrl);
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
@@ -129,7 +151,7 @@ namespace Svn2GitMIgrator.Domain
             
             //powerScript.AddArgument("privatetoken", request.PrivateToken);
             powerScript.AddArgument("originUrl", originUrl);
-            return powerScript.Execute();
+            return powerScript.ExecuteAync();
         }        
     }
 }

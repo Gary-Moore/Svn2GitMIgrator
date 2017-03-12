@@ -1,4 +1,4 @@
-﻿(function ($) {
+﻿(function () {
     'use strict';
 
     angular.module('migrator.svn').controller('SvnRepoController', SvnRepoController);
@@ -20,14 +20,13 @@
 
         function init() {
             vm.model = {}
+            vm.messages = "";
             vm.model = localStorageService.get('settings');
             vm.settingsCollapsed = true;
-            vm.messages = {};
-
             migrationHub = $.connection.migrationHub;
             $.connection.hub.logging = true;
             $.connection.hub.start();
-            migrationHub.client.progressUpdate = updateProgress;
+            migrationHub.client.progress = updateProgress;
         }
                
         function navigate(url) {
@@ -54,6 +53,16 @@
                     }
                 }
             });
+
+            modalInstance.result.then(function (model) {
+                vm.showProgress = true;
+                vm.messages = "";
+                svnService.migrate(model).then(function (result) {
+                    toastr.success('Migration Complete');
+                });
+            }, function () {
+               
+            });
         }
 
         function saveSettings() {
@@ -73,7 +82,7 @@
         }
 
         function updateProgress(message) {
-            vm.messages.push(message);
+            vm.messages += message;
         }
     }
-})(jQuery);
+})();
