@@ -23,6 +23,11 @@ namespace Svn2GitMIgrator.App
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/signalr").Include(
+                        "~/Scripts/jquery.signalR-2.1.2.js",
+                        "~/signalr/hubs"
+                        ));
+
             bundles.Add(new ScriptBundle("~/assets/js/angular/bundle").Include(
                         "~/Scripts/toastr.js",
                         "~/Scripts/angular.js",

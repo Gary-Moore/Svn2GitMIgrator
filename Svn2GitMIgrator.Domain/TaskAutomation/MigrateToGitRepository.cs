@@ -2,7 +2,7 @@
 {
     public class MigrateToGitRepository : PowershellScript
     {
-        protected override string Name => "Migrate-SvnRepoToGit.ps1";
+        protected override string Name => "Migrate-SvnRepository.ps1";
     }
 }
     

@@ -3,6 +3,9 @@ using System.Linq;
 using System.Web.Mvc;
 using Svn2GitMIgrator.Domain;
 using Svn2GitMIgrator.App.Models;
+using Microsoft.AspNet.SignalR;
+using Svn2GitMIgrator.App.Hubs;
+using System.Threading.Tasks;
 
 namespace Svn2GitMIgrator.App.Controllers
 {
@@ -55,6 +58,16 @@ namespace Svn2GitMIgrator.App.Controllers
             }
             
             return Json(result);
+        }
+
+        public  void NotifyUpdates(string message)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MigrationHub>();
+            if (hubContext != null)
+            {
+               // var stats = await this.GenerateStatistics();
+                hubContext.Clients.All.ProgressUpdate(message);
+            }
         }
     }
 }

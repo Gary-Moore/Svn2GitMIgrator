@@ -33,14 +33,14 @@ Param(
 )
 
 # Variables
-$createProjectUrl = $gitlabUrl + "/v3/projects"
+$createProjectUrl = $gitlabUrl + "/api/v3/projects"
 
-Write-Output "Creating new GitLab project"
+Write-Progress "Creating new GitLab project"
 
 # Create new project inside GitLab repo
-$postParams = @{name=$projectName; namespace_id=$namespaceid; visibility="private"; path=$path; private_token=$privatetoken}
-$response = Invoke-WebRequest -Uri $createProjectUrl -Method POST -Body $postParams
+$postParams = @{name=$projectName; namespace_id=$namespaceid; visibility="public"; path=$path; private_token=$privatetoken}
+$response = Invoke-RestMethod -Uri $createProjectUrl -Method POST -Body $postParams
 
-Write-Output $response
+Write-Output $response.http_url_to_repo
 
-Write-Output "Project created"
+Write-Progress "Project created"

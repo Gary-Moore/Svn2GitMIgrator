@@ -16,13 +16,10 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
 
         protected readonly string ScriptFolderPath;
 
-        public List<string> ErrorMessages { get; }
-
         protected PowershellScript()
         {
             ArgumentsList = new List<KeyValuePair<string, string>>();
             ScriptFolderPath = ConfigurationManager.AppSettings["PowerShellDirectory"];
-            ErrorMessages = new List<string>();
         }
 
         public PSCommand Create()
@@ -73,7 +70,7 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
                 {
                     if (outputItem != null)
                     {
-                        result.Messages.Add(outputItem.BaseObject.ToString());
+                        result.Outputs.Add(outputItem.BaseObject);
                     }
                 }
                 

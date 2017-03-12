@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Svn2GitMIgrator.Domain.FileSystem;
 using Svn2GitMIgrator.Domain.Svn;
 using Svn2GitMIgrator.Domain.TaskAutomation;
+using System;
 
 namespace Svn2GitMIgrator.Domain
 {
@@ -27,17 +28,32 @@ namespace Svn2GitMIgrator.Domain
 
         public void Migrate(GitMigrationRequest request)
         {
-            CreateGitLabGroup(request);
-           // CreateGitLabProject(request, "");
-            var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
+            var createGroupResult = CreateGitLabGroup(request);
+            if (createGroupResult)
+            {
+                var groupId = createGroupResult.Outputs.FirstOrDefault().ToString();
+                var createProjectResult = CreateGitLabProject(request, groupId);
 
-            // create new gitlab project
-            var originUrl = "<gitlab url>";
-            LogUniqueUserToFile(request, checkoutPath);
+                if (createProjectResult)
+                {
+                    var originUrl = ExtractGitOriginUrl(createProjectResult.Outputs.FirstOrDefault().ToString(), request.GitLabUrl);
+                    var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
-            //CloneRepository(request, checkoutPath, originUrl);
-            
-            // Create new TeamCity Configuration
+                    // create new gitlab project
+                    LogUniqueUserToFile(request, checkoutPath);
+
+                    CloneRepository(request, checkoutPath, originUrl);
+                }
+            }
+        }
+
+        private string ExtractGitOriginUrl(string sourceUrl, string gitlabUrl)
+        {
+            var splitVals = sourceUrl.Split('/');
+            var projectSegment = splitVals[splitVals.Length - 1];
+            var groupSegment = splitVals[splitVals.Length - 2];
+
+            return string.Format("{0}/{1}/{2}", gitlabUrl, groupSegment, projectSegment);
         }
         
         private void LogUniqueUserToFile(GitMigrationRequest request, string checkoutPath)
@@ -95,15 +111,15 @@ namespace Svn2GitMIgrator.Domain
         private ScriptExecutionResult CreateGitLabGroup(GitMigrationRequest request)
         {
             var powerScript = new CreateGitLabGroup();
-            powerScript.AddArgument("groupname", request.GitProjectName);
-            powerScript.AddArgument("grouppath", request.GitProjectName);
+            powerScript.AddArgument("groupname", request.GitGroupName);
+            powerScript.AddArgument("groupPath", request.GitGroupPath);
             powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
             powerScript.AddArgument("privatetoken", request.PrivateToken);
 
             return powerScript.Execute();
         }
 
-        private void CloneRepository(GitMigrationRequest request, string checkoutPath, string originUrl)
+        private ScriptExecutionResult CloneRepository(GitMigrationRequest request, string checkoutPath, string originUrl)
         {
             var powerScript = new MigrateToGitRepository();
             powerScript.AddArgument("repoUrl", request.RepositorylUrl);
@@ -112,13 +128,8 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("password", request.Password);
             
             //powerScript.AddArgument("privatetoken", request.PrivateToken);
-            //powerScript.AddArgument("privatetoken", "iac_MyKnRhxXH1ZxWfEp");
-            //powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
-            //powerScript.AddArgument("gitlabUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com");
             powerScript.AddArgument("originUrl", originUrl);
-            //powerScript.AddArgument("originUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/PapersLaid.Admin.git");
-            
-            powerScript.Execute();
-        }
+            return powerScript.Execute();
+        }        
     }
 }

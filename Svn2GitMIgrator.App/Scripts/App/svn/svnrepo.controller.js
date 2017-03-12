@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function ($) {
     'use strict';
 
     angular.module('migrator.svn').controller('SvnRepoController', SvnRepoController);
@@ -13,6 +13,8 @@
         vm.navigate = navigate;
         vm.navigateBack = navigateBack;
         vm.openMigrateModal = openMigrateModal;
+        
+        var migrationHub;
 
         vm.init();
 
@@ -20,6 +22,12 @@
             vm.model = {}
             vm.model = localStorageService.get('settings');
             vm.settingsCollapsed = true;
+            vm.messages = {};
+
+            migrationHub = $.connection.migrationHub;
+            $.connection.hub.logging = true;
+            $.connection.hub.start();
+            migrationHub.client.progressUpdate = updateProgress;
         }
                
         function navigate(url) {
@@ -62,7 +70,10 @@
                     toastr.error(result.Message, "Error retrieving repo info:");
                 }                
             });
+        }
 
+        function updateProgress(message) {
+            vm.messages.push(message);
         }
     }
-})();
+})(jQuery);

@@ -35,18 +35,21 @@ Param(
 )
 
 # Variables
-$createGroupUrl = $gitlabUrl + "/v3/groups"
-
-Write-Output "Creating new GitLab group"
+$groupsUrl = $gitlabUrl + "/api/v3/groups"
+$getParams = @{search = $groupName; private_token=$privatetoken}
 
 # Check if group already exists
 
+$response = Invoke-RestMethod -Method Get -Uri $groupsUrl -Body $getParams
+
 # if existing, return group id
+if($response.name -eq $groupName){
+	Write-Output $response.id
+}
+else{
+	# else, create new group inside GitLab repo and return id
+	$postParams = @{name=$groupName; visibility="public"; path=$groupPath; private_token=$privatetoken}
+	$response = Invoke-RestMethod -Uri $groupsUrl -Method POST -Body $postParams
 
-# else, create new group inside GitLab repo and return id
-$postParams = @{name=$groupName; visibility="public"; path=$path; private_token=$privatetoken}
-$response = Invoke-WebRequest -Uri $createGroupUrl -Method POST -Body $postParams
-
-Write-Output $response
-
-Write-Output "Project created"
+	Write-Output $response.id	
+}
