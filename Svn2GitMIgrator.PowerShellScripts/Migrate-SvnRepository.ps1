@@ -41,7 +41,7 @@ Param(
 Write-Progress "Cloning SVN repository into Git folder"
 
 # Clone SVN repo into local Git Repository
-echo $password | git svn clone $repoUrl --username $username --no-metadata -A $checkoutPath/authors-transform.txt -t tags/* -b releases/* -T trunk $checkoutPath/repo
+echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t tags/* -b releases/* -T trunk $checkoutPath/repo
 
 # Download visual studio .gitignore file into repository folder from github
 Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $checkoutPath/repo/.gitignore
