@@ -1,6 +1,7 @@
 ﻿(function () {
     angular.module('migrator.core', [
             'ui.bootstrap',
-            'LocalStorageModule'
+            'LocalStorageModule',
+            'SignalR'
         ]);
 }());

@@ -3,9 +3,9 @@
 
     angular.module('migrator.svn').controller('SvnRepoController', SvnRepoController);
 
-    SvnRepoController.$inject = ['svnService', 'localStorageService', '$uibModal'];
+    SvnRepoController.$inject = ['svnService', 'localStorageService', '$uibModal', '$scope', 'Hub'];
 
-    function SvnRepoController(svnService, localStorageService, $uibModal) {
+    function SvnRepoController(svnService, localStorageService, $uibModal, $scope, Hub) {
         var vm = this;
         vm.init = init;
         vm.search = search;
@@ -13,20 +13,28 @@
         vm.navigate = navigate;
         vm.navigateBack = navigateBack;
         vm.openMigrateModal = openMigrateModal;
-        
+
         var migrationHub;
 
         vm.init();
 
         function init() {
-            vm.model = {}
+            vm.model = {};
             vm.messages = "";
             vm.model = localStorageService.get('settings');
             vm.settingsCollapsed = true;
-            migrationHub = $.connection.migrationHub;
-            $.connection.hub.logging = true;
-            $.connection.hub.start();
-            migrationHub.client.progress = updateProgress;
+
+            migrationHub = new Hub('migrationHub', {
+                listeners: {
+                    'progress': function (message) {
+                        vm.messages += message;
+                        $scope.$apply();
+                    }
+                },
+                errorHandler: function (error) {
+                    console.error(error);
+                }
+            });
         }
                
         function navigate(url) {
@@ -79,10 +87,6 @@
                     toastr.error(result.Message, "Error retrieving repo info:");
                 }                
             });
-        }
-
-        function updateProgress(message) {
-            vm.messages += message;
         }
     }
 })();

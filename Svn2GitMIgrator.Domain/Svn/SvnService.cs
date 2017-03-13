@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using SharpSvn;
 using SharpSvn.Security;
-using Svn2GitMIgrator.Domain.FileSystem;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.Domain.Svn
 {
@@ -16,16 +15,9 @@ namespace Svn2GitMIgrator.Domain.Svn
         private string _svnPassword;
         private string _svnRootUrl;
         private string _svnUsername;
-        private readonly string _workingDirectoryPath;
 
         public SvnService()
         {
-            _workingDirectoryPath = ConfigurationManager.AppSettings["WorkingFolderPath"];
-
-            if (string.IsNullOrWhiteSpace(_workingDirectoryPath))
-            {
-                throw new ConfigurationErrorsException("App setting 'WorkingFolderPath' is missing or empty");
-            }
         }
 
         public IEnumerable<SvnRepoInfo> GetRepoList(SvnRepositoryRequest request)
@@ -77,19 +69,7 @@ namespace Svn2GitMIgrator.Domain.Svn
 
             return authors.Distinct();
         }
-
-        private string SetWorkingCheckoutDirectoryPath(string repositorylUrl)
-        {
-            var splitVals = repositorylUrl.Split('/');
-            var appFolderName = splitVals[splitVals.Length - 2];
-
-            var workingCheckoutDirectoryPath = Path.Combine(_workingDirectoryPath, splitVals[splitVals.Length - 3], splitVals[splitVals.Length - 2]);
-            var directory = FileSystemHelper.EnsureFolderExists(workingCheckoutDirectoryPath);
-            FileSystemHelper.ClearFolder(directory);
-            
-            return workingCheckoutDirectoryPath;
-        }
-
+        
         private void SetCredentials(SvnRepositoryRequest request)
         {
             if (string.IsNullOrEmpty(request.Password))

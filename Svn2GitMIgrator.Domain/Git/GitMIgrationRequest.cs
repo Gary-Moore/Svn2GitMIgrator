@@ -1,4 +1,6 @@
-﻿namespace Svn2GitMIgrator.Domain.Svn
+﻿using Svn2GitMIgrator.Domain.Svn;
+
+namespace Svn2GitMIgrator.Domain.Git
 {
     public class GitMigrationRequest : SvnRepositoryRequest
     {
@@ -8,5 +10,7 @@
         public string GitGroupPath { get; set; }
         public string GitProjectName { get; set; }
         public string GitProjectPath { get; set; }
+        public string GitUserName { get; set; }
+        public string GitUserEmail { get; set; }
     }
 }

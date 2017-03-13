@@ -31,7 +31,9 @@ Param(
 	[Parameter(Mandatory=$true)][string]$checkoutPath,
 	[Parameter(Mandatory=$true)][string]$username,
 	[Parameter(Mandatory=$true)][string]$password,
-	[Parameter(Mandatory=$true)][string]$originUrl
+	[Parameter(Mandatory=$true)][string]$originUrl,
+	[Parameter(Mandatory=$true)][string]$gitUserName,
+	[Parameter(Mandatory=$true)][string]$gitUserEmail
 )
 
 #Variables
@@ -46,7 +48,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/Visu
 
 # Cleanup - convert git svn remote tags into real (lightweight) Git tags
 cd $checkoutPath/repo
-Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origin/tags){
+Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origin){
 	# strip off excess tag paths, i.e. /origin/tags/1.0.0 becomes 1.0.0
     $tagName = [regex]::match($tag,'[^/\/]+$').Groups[0].Value 
 	# create proper tag
@@ -61,8 +63,11 @@ git remote add origin $originUrl
 # removed cached files an then add to aloow the .gitignore file to be applied (remove packages folder etc.)
 git rm -r --cached .
 
+git config --global user.name $gitUserName
+git config --global user.email $gitUserEmail
+
 # add all files, commit and push everything to origin
 git add .
 git commit -m 'migration to git'
-$ git push origin master --all
-$ git push origin master --tags
+git push origin master --all
+git push origin master --tags

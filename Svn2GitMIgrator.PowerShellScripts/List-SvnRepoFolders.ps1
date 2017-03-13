@@ -33,8 +33,9 @@ Param(
 $directories =  [xml](svn ls $svnUrl --xml)
 
  Foreach ($directory in $directories.lists.list.entry){
-    # output the name of each top level project folder to an excel file   
-    $directory.name >> $outputFile
+    # output the name of each top level project folder to an excel file 
+	$ProjectName = "*Project: " + $directory.name
+    $ProjectName >> $outputFile
 	# Get all next level child level folders with the parent project folder
     $projectpath = $svnUrl + $directory.name + '/'
     $subdirectories = [xml] (svn list $projectpath --xml)

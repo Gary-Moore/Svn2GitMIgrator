@@ -6,6 +6,7 @@ using Svn2GitMIgrator.App.Models;
 using Microsoft.AspNet.SignalR;
 using Svn2GitMIgrator.App.Hubs;
 using System.Threading.Tasks;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.App.Controllers
 {

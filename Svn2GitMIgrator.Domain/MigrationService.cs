@@ -7,6 +7,7 @@ using Svn2GitMIgrator.Domain.FileSystem;
 using Svn2GitMIgrator.Domain.Svn;
 using Svn2GitMIgrator.Domain.TaskAutomation;
 using System;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.Domain
 {
@@ -97,7 +98,7 @@ namespace Svn2GitMIgrator.Domain
                 }
                 else
                 {
-                    authorText.AppendFormat("{1} = {0} <{1}@parliament.uk>", "Mike Hunt", uniqueAuthor);
+                    authorText.AppendFormat("{0} = {0} <{0}@parliament.uk>", uniqueAuthor);
                 }
                 authorText.AppendLine();
             }
@@ -148,9 +149,10 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
             powerScript.AddArgument("password", request.Password);
-            
-            //powerScript.AddArgument("privatetoken", request.PrivateToken);
+            powerScript.AddArgument("gitUserEmail", request.GitUserEmail);
+            powerScript.AddArgument("gitUserName", request.GitUserName);
             powerScript.AddArgument("originUrl", originUrl);
+
             return powerScript.ExecuteAync();
         }        
     }

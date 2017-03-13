@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.Domain.Svn
 {

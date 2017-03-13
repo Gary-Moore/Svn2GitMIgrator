@@ -13,7 +13,7 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
     {
         protected abstract string Name { get; }
         private ICollection<KeyValuePair<string, string>> ArgumentsList { get; }
-        private Action<string> _callback;
+        private readonly Action<string> _callback;
         protected readonly string ScriptFolderPath;
 
         protected PowershellScript(Action<string> callback)
@@ -154,7 +154,7 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
             Collection<PSObject> results = myp.ReadAll();
             foreach (PSObject result in results)
             {
-                _callback(result.ToString());
+                _callback(result + Environment.NewLine);
             }
         }
 
@@ -165,7 +165,7 @@ namespace Svn2GitMIgrator.Domain.TaskAutomation
             Collection<ErrorRecord> errors = myp.ReadAll();
             foreach (ErrorRecord error in errors) 
             {
-                _callback(error.ToString());
+                _callback(error + Environment.NewLine);
             }
         }
 
