@@ -11,6 +11,7 @@ namespace Svn2GitMIgrator.Domain.Git
         public string GitProjectName { get; set; }
         public string GitProjectPath { get; set; }
         public string GitUserName { get; set; }
-        public string GitUserEmail { get; set; }
+        public string GitPassword { get; set; }
+        public string GitEmail { get; set; }
     }
 }

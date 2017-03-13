@@ -39,7 +39,7 @@ namespace Svn2GitMIgrator.Domain
 
                 if (createProjectResult)
                 {
-                    var originUrl = ExtractGitOriginUrl(createProjectResult.Outputs.FirstOrDefault().ToString(), request.GitLabUrl);
+                    var originUrl = ExtractGitOriginUrl(createProjectResult.Outputs.FirstOrDefault().ToString(), request.GitLabUrl, request.GitUserName, request.GitPassword);
                     callback("Created origin at : " + originUrl + Environment.NewLine);
 
                     var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
@@ -47,7 +47,11 @@ namespace Svn2GitMIgrator.Domain
                     // create new gitlab project
                     LogUniqueUserToFile(request, checkoutPath);
                     callback("Migrating repository" + Environment.NewLine);
-                    CloneRepository(request, checkoutPath, originUrl, callback);
+                    var cloneResult = CloneRepository(request, checkoutPath, originUrl, callback);
+                    if (cloneResult)
+                    {
+                        callback("SVN repository sucessfully migrated to Git!" + Environment.NewLine);
+                    }
                 }
                 else
                 {
@@ -70,13 +74,14 @@ namespace Svn2GitMIgrator.Domain
             }
         }
 
-        private string ExtractGitOriginUrl(string sourceUrl, string gitlabUrl)
+        private string ExtractGitOriginUrl(string sourceUrl, string gitlabUrl, string gitUserName, string gitPassword)
         {
             var splitVals = sourceUrl.Split('/');
             var projectSegment = splitVals[splitVals.Length - 1];
             var groupSegment = splitVals[splitVals.Length - 2];
+            var hostSegment = new Uri(gitlabUrl).Host;
 
-            return string.Format("{0}/{1}/{2}", gitlabUrl, groupSegment, projectSegment);
+            return string.Format("http://{0}:{1}@{2}/{3}/{4}", gitUserName, gitPassword,  hostSegment, groupSegment, projectSegment);
         }
         
         private void LogUniqueUserToFile(GitMigrationRequest request, string checkoutPath)
@@ -149,9 +154,9 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
             powerScript.AddArgument("password", request.Password);
-            powerScript.AddArgument("gitUserEmail", request.GitUserEmail);
-            powerScript.AddArgument("gitUserName", request.GitUserName);
             powerScript.AddArgument("originUrl", originUrl);
+            powerScript.AddArgument("gitUserName", request.GitUserName);
+            powerScript.AddArgument("gitEmail", request.GitEmail);
 
             return powerScript.ExecuteAync();
         }        
