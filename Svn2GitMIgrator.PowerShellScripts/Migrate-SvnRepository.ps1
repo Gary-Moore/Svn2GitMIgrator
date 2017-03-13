@@ -36,7 +36,7 @@ Param(
 
 #Variables
 
-Write-Output "Cloning SVN repository into Git folder"
+Write-Progress "Cloning SVN repository into Git folder"
 
 # Clone SVN repo into local Git Repository
 echo $password | git svn clone $repoUrl --username $username --no-metadata -A $checkoutPath/authors-transform.txt -t tags/* -b releases/* -T trunk $checkoutPath/repo
@@ -64,5 +64,5 @@ git rm -r --cached .
 # add all files, commit and push everything to origin
 git add .
 git commit -m 'migration to git'
-$ git push origin --all
-$ git push origin --tags
+$ git push origin master --all
+$ git push origin master --tags

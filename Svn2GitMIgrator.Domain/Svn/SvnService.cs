@@ -55,29 +55,8 @@ namespace Svn2GitMIgrator.Domain.Svn
                 throw new SvnMigrationException(ex.Message, ex); ;
             }            
         }
-
-        public string Checkout(SvnRepositoryRequest request)
-        {
-            SetCredentials(request);
-            var workingCheckoutDirectoryPath = SetWorkingCheckoutDirectoryPath(request.RepositorylUrl);
-
-            try
-            {
-                using (var client = GetSvnClient())
-                {
-                    var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                    client.CheckOut(repoUrl, workingCheckoutDirectoryPath);
-                    client.Upgrade(workingCheckoutDirectoryPath);
-                }
-            }
-            catch (SvnRepositoryIOException ex)
-            {
-                throw new SvnMigrationException(ex.Message, ex); ;
-            }
-            return workingCheckoutDirectoryPath;
-        }
-
-        public IEnumerable<string> LogUniqueUsers(SvnRepositoryRequest request, string checkoutPath)
+        
+        public IEnumerable<string> LogUniqueUsers(GitMigrationRequest request, string checkoutPath)
         {
             var authors = new List<string>();
             SetCredentials(request);

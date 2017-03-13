@@ -1,3 +1,6 @@
+#
+# Create_GitLabGroup.ps1
+#
 <#
 .Synopsis
     This is a script to migrate an SVN reposistory into a Git repository
@@ -25,22 +28,28 @@
 
 ##Paramaters
 Param(
-	[Parameter(Mandatory=$true)][string]$projectName,
-	[Parameter(Mandatory=$true)][string]$path,
+	[Parameter(Mandatory=$true)][string]$groupName,
+	[Parameter(Mandatory=$true)][string]$groupPath,
 	[Parameter(Mandatory=$true)][string]$privatetoken,
-	[Parameter(Mandatory=$true)][string]$gitlabUrl,
-	[Parameter(Mandatory=$true)][string]$namespaceid
+	[Parameter(Mandatory=$true)][string]$gitlabUrl
 )
 
 # Variables
-$createProjectUrl = $gitlabUrl + "/api/v3/projects"
+$groupsUrl = $gitlabUrl + "/api/v3/groups"
+$getParams = @{search = $groupName; private_token=$privatetoken}
 
-Write-Progress "Creating new GitLab project"
+# Check if group already exists
 
-# Create new project inside GitLab repo
-$postParams = @{name=$projectName; namespace_id=$namespaceid; visibility="public"; path=$path; private_token=$privatetoken}
-$response = Invoke-RestMethod -Uri $createProjectUrl -Method POST -Body $postParams
+$response = Invoke-RestMethod -Method Get -Uri $groupsUrl -Body $getParams
 
-Write-Output $response.http_url_to_repo
+# if existing, return group id
+if($response.name -eq $groupName){
+	Write-Output $response.id
+}
+else{
+	# else, create new group inside GitLab repo and return id
+	$postParams = @{name=$groupName; visibility="public"; path=$groupPath; private_token=$privatetoken}
+	$response = Invoke-RestMethod -Uri $groupsUrl -Method POST -Body $postParams
 
-Write-Progress "Project created"
+	Write-Output $response.id	
+}

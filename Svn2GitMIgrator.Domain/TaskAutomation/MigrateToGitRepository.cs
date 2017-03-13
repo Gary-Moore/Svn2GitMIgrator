@@ -1,8 +1,14 @@
-﻿namespace Svn2GitMIgrator.Domain.TaskAutomation
+﻿using System;
+
+namespace Svn2GitMIgrator.Domain.TaskAutomation
 {
     public class MigrateToGitRepository : PowershellScript
     {
-        protected override string Name => "Migrate-SvnRepoToGit.ps1";
+        public MigrateToGitRepository(Action<string> callback) : base(callback)
+        {
+        }
+
+        protected override string Name => "Migrate-SvnRepository.ps1";
     }
 }
     

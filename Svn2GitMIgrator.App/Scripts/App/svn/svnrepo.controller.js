@@ -13,13 +13,20 @@
         vm.navigate = navigate;
         vm.navigateBack = navigateBack;
         vm.openMigrateModal = openMigrateModal;
+        
+        var migrationHub;
 
         vm.init();
 
         function init() {
             vm.model = {}
+            vm.messages = "";
             vm.model = localStorageService.get('settings');
             vm.settingsCollapsed = true;
+            migrationHub = $.connection.migrationHub;
+            $.connection.hub.logging = true;
+            $.connection.hub.start();
+            migrationHub.client.progress = updateProgress;
         }
                
         function navigate(url) {
@@ -46,6 +53,16 @@
                     }
                 }
             });
+
+            modalInstance.result.then(function (model) {
+                vm.showProgress = true;
+                vm.messages = "";
+                svnService.migrate(model).then(function (result) {
+                    toastr.success('Migration Complete');
+                });
+            }, function () {
+               
+            });
         }
 
         function saveSettings() {
@@ -62,7 +79,10 @@
                     toastr.error(result.Message, "Error retrieving repo info:");
                 }                
             });
+        }
 
+        function updateProgress(message) {
+            vm.messages += message;
         }
     }
 })();
