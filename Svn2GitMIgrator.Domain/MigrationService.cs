@@ -39,15 +39,21 @@ namespace Svn2GitMIgrator.Domain
 
                 if (createProjectResult)
                 {
-                    var originUrl = ExtractGitOriginUrl(createProjectResult.Outputs.FirstOrDefault().ToString(), request.GitLabUrl);
-                    callback("Created origin at : " + originUrl + Environment.NewLine);
+                    var gitLabProjectUrl = createProjectResult.Outputs.FirstOrDefault().ToString();
+                    var originUrl = ExtractGitOriginUrl(gitLabProjectUrl, request.GitLabUrl, request.GitUserName, request.GitPassword);
+                    callback("Created origin at : " + gitLabProjectUrl + Environment.NewLine);
 
                     var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
                     // create new gitlab project
                     LogUniqueUserToFile(request, checkoutPath);
                     callback("Migrating repository" + Environment.NewLine);
-                    CloneRepository(request, checkoutPath, originUrl, callback);
+                    var cloneResult = CloneRepository(request, checkoutPath, originUrl, callback);
+
+                    if (cloneResult)
+                    {
+                        callback("SVN Repository successfully migrated!" + Environment.NewLine);
+                    }
                 }
                 else
                 {
@@ -70,13 +76,14 @@ namespace Svn2GitMIgrator.Domain
             }
         }
 
-        private string ExtractGitOriginUrl(string sourceUrl, string gitlabUrl)
+        private string ExtractGitOriginUrl(string sourceUrl, string gitlabUrl, string username, string password)
         {
             var splitVals = sourceUrl.Split('/');
             var projectSegment = splitVals[splitVals.Length - 1];
             var groupSegment = splitVals[splitVals.Length - 2];
+            var host = new Uri(gitlabUrl).Host;
 
-            return string.Format("{0}/{1}/{2}", gitlabUrl, groupSegment, projectSegment);
+            return $"http://{username}:{password}@{host}/{groupSegment}/{projectSegment}";
         }
         
         private void LogUniqueUserToFile(GitMigrationRequest request, string checkoutPath)

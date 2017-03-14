@@ -2,11 +2,11 @@
   "users": [
     {
       "svnname": "adamss",
-      "author": "Stephen Adams"
+      "author": "Steve Adams"
     },
     {
       "svnname": "bolts",
-      "author": "Stephen Bolt"
+      "author": "Steve Bolt"
     },
     {
       "svnname": "moorega",
@@ -90,7 +90,7 @@
     },
     {
       "svnname": "sanganik",
-      "author": "Kusha Sangani"
+      "author": "Kushal Sangani"
     },
     {
       "svnname": "depullaj",
@@ -99,6 +99,18 @@
     {
       "svnname": "sharkeyn",
       "author": "Neil Sharkey"
+    },
+    {
+      "svnname": "graffing",
+      "author": "Gavin Graffin"
+    },
+    {
+      "svnname": "spainm",
+      "author": "Martin Spain"
+    },
+    {
+      "svnname": "houghtonp",
+      "author": "Paul Houghton"
     }
   ]
 }

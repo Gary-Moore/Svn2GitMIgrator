@@ -41,7 +41,7 @@ Param(
 Write-Progress "Cloning SVN repository into Git folder"
 
 # Clone SVN repo into local Git Repository
-echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t tags/* -b releases/* -T trunk $checkoutPath/repo
+echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t releases/* -T trunk $checkoutPath/repo
 
 # Download visual studio .gitignore file into repository folder from github
 Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $checkoutPath/repo/.gitignore
@@ -57,17 +57,18 @@ Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origi
 	git branch -D -r $tag
 }
 
+git config user.name $gitUserName
+git config user.email $gitUserEmail
+
 # add origin remote to GitLab central repo server 
 git remote add origin $originUrl
 
-# removed cached files an then add to aloow the .gitignore file to be applied (remove packages folder etc.)
-git rm -r --cached .
 
-git config --global user.name $gitUserName
-git config --global user.email $gitUserEmail
+# removed cached files an then add to allow the .gitignore file to be applied (remove packages folder etc.)
+git rm -r --cached .
 
 # add all files, commit and push everything to origin
 git add .
 git commit -m 'migration to git'
-git push origin master --all
-git push origin master --tags
+git push origin master --quiet
+git push origin master --tags --quiet
