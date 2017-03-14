@@ -32,8 +32,8 @@ Param(
 	[Parameter(Mandatory=$true)][string]$username,
 	[Parameter(Mandatory=$true)][string]$password,
 	[Parameter(Mandatory=$true)][string]$originUrl,
-	[Parameter(Mandatory=$true)][string]$gitUsername,
-	[Parameter(Mandatory=$true)][string]$gitEmail
+	[Parameter(Mandatory=$true)][string]$gitUserName,
+	[Parameter(Mandatory=$true)][string]$gitUserEmail
 )
 
 #Variables
@@ -57,17 +57,18 @@ Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origi
 	git branch -D -r $tag
 }
 
+git config user.name $gitUserName
+git config user.email $gitUserEmail
+
 # add origin remote to GitLab central repo server 
 git remote add origin $originUrl
 
-git config user.email $gitEmail
-git config user.name $gitUsername
 
-# removed cached files an then add to aloow the .gitignore file to be applied (remove packages folder etc.)
+# removed cached files an then add to allow the .gitignore file to be applied (remove packages folder etc.)
 git rm -r --cached .
 
 # add all files, commit and push everything to origin
 git add .
 git commit -m 'migration to git'
-git push origin master
-git push origin master --tags
+git push origin master --quiet
+git push origin master --tags --quiet
