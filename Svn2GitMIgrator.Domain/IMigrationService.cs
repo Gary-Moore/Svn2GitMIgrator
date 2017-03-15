@@ -6,6 +6,6 @@ namespace Svn2GitMIgrator.Domain
 {
     public interface IMigrationService
     {
-        void Migrate(GitMigrationRequest request, Action<string> callback);
+        MigrationResult Migrate(GitMigrationRequest request, Action<string> callback);
     }
 }

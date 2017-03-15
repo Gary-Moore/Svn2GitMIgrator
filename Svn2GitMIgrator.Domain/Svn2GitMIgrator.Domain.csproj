@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="FileSystem\FileSystemHelper.cs" />
     <Compile Include="IMigrationService.cs" />
+    <Compile Include="MigrationResult.cs" />
     <Compile Include="MigrationService.cs" />
     <Compile Include="SvnMigrationException.cs" />
     <Compile Include="Git\GitMIgrationRequest.cs" />

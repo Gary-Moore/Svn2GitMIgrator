@@ -37,17 +37,18 @@ Param(
 )
 
 #Variables
+$workingRepoFolder = $checkoutPath + '/repo';
 
 Write-Progress "Cloning SVN repository into Git folder"
 
 # Clone SVN repo into local Git Repository
-echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t releases/* -T trunk $checkoutPath/repo
+echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t releases/* -T trunk $workingRepoFolder
 
 # Download visual studio .gitignore file into repository folder from github
-Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $checkoutPath/repo/.gitignore
+Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $workingRepoFolder/.gitignore
 
 # Cleanup - convert git svn remote tags into real (lightweight) Git tags
-cd $checkoutPath/repo
+cd $workingRepoFolder
 Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origin){
 	# strip off excess tag paths, i.e. /origin/tags/1.0.0 becomes 1.0.0
     $tagName = [regex]::match($tag,'[^/\/]+$').Groups[0].Value 
@@ -72,3 +73,6 @@ git add .
 git commit -m 'migration to git'
 git push origin master --quiet
 git push origin master --tags --quiet
+
+# When completed clean up the working directiory
+Get-ChildItem ($checkoutPath + "\*") -Recurse | Remove-Item -Recurse -Force   

@@ -27,8 +27,9 @@ namespace Svn2GitMIgrator.Domain
             }
         }
 
-        public void Migrate(GitMigrationRequest request, Action<string> callback)
+        public MigrationResult Migrate(GitMigrationRequest request, Action<string> callback)
         {
+            
             callback("Creating group: " + request.GitGroupName + Environment.NewLine);
             var createGroupResult = CreateGitLabGroup(request, callback);
             if (createGroupResult)
