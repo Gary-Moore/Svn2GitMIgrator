@@ -66,10 +66,14 @@
                 vm.showProgress = true;
                 vm.messages = "";
                 svnService.migrate(model).then(function (result) {
-                    toastr.success('Migration Complete');
+                    if (!result.Error) {
+                        toastr.success('Migration Complete');
+                    } else {
+                        toastr.error(result.Message, "Migration process failed:");
+                    }
                 });
             }, function () {
-               
+                toastr.error('Migration Process failed due to an error');
             });
         }
 

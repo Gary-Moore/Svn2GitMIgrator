@@ -1,4 +1,5 @@
-﻿using Svn2GitMIgrator.Domain.Svn;
+﻿using System;
+using Svn2GitMIgrator.Domain.Svn;
 using System.Linq;
 using System.Web.Mvc;
 using Svn2GitMIgrator.Domain;
@@ -32,7 +33,9 @@ namespace Svn2GitMIgrator.App.Controllers
             WebResult result = new WebResult();
             try
             {
-                _migrationService.Migrate(request, NotifyUpdates);
+                var migrationResult = _migrationService.Migrate(request, NotifyUpdates);
+                result.Error = !migrationResult.Success;
+                result.Message = string.Join(Environment.NewLine, migrationResult.ErrorMessages.ToArray());
             }
             catch (SvnMigrationException ex)
             {

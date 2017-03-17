@@ -16,6 +16,10 @@ namespace Svn2GitMIgrator.Domain
         private readonly ISvnService _svnService;
         private readonly string _workingDirectoryPath;
 
+        private const string ErrorCreatingProject = "There was an error when attempting to create a project in GitLab";
+        private const string ErrorCreatingGroup= "There was an error when attempting to create a Group in GitLab";
+        private const string ErrorMigratingRepository = "The migration to GitLab process failed";
+
         public MigrationService(ISvnService svnService)
         {
             _svnService = svnService;
@@ -29,7 +33,7 @@ namespace Svn2GitMIgrator.Domain
 
         public MigrationResult Migrate(GitMigrationRequest request, Action<string> callback)
         {
-            
+            var migrationResult = new MigrationResult();
             callback("Creating group: " + request.GitGroupName + Environment.NewLine);
             var createGroupResult = CreateGitLabGroup(request, callback);
             if (createGroupResult)
@@ -54,19 +58,32 @@ namespace Svn2GitMIgrator.Domain
                     if (cloneResult)
                     {
                         callback("SVN Repository successfully migrated!" + Environment.NewLine);
+                        migrationResult.Success = true;
+                    }
+                    else
+                    {
+                        migrationResult.Success = false;
+                        callback(ErrorMigratingRepository + Environment.NewLine);
+                        migrationResult.ErrorMessages.Add(ErrorMigratingRepository);
                     }
                 }
                 else
                 {
-                    callback("Error creating project:" + Environment.NewLine);
+                    callback(ErrorCreatingProject + Environment.NewLine);
                     OutputErrors(createProjectResult, callback);
+                    migrationResult.Success = false;
+                    migrationResult.ErrorMessages.Add(ErrorCreatingProject);
                 }
             }
             else
             {
-                callback("Error creating group:" + Environment.NewLine);
+                callback(ErrorCreatingGroup + Environment.NewLine);
                 OutputErrors(createGroupResult, callback);
+                migrationResult.Success = false;
+                migrationResult.ErrorMessages.Add(ErrorCreatingGroup);
             }
+
+            return migrationResult;
         }
 
         private void OutputErrors(ScriptExecutionResult result, Action<string> errorCallback)
