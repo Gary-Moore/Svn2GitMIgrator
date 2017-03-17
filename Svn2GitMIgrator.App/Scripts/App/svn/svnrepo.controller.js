@@ -72,8 +72,11 @@
                         toastr.error(result.Message, "Migration process failed:");
                     }
                 });
-            }, function () {
-                toastr.error('Migration Process failed due to an error');
+            }, function (data) {
+                if (data !== 'cancel') {
+                    toastr.error('Migration Process failed due to an error');
+                }
+                
             });
         }
 

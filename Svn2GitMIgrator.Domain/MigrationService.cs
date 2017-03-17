@@ -17,7 +17,7 @@ namespace Svn2GitMIgrator.Domain
         private readonly string _workingDirectoryPath;
 
         private const string ErrorCreatingProject = "There was an error when attempting to create a project in GitLab";
-        private const string ErrorCreatingGroup= "There was an error when attempting to create a Group in GitLab";
+        private const string ErrorCreatingGroup = "There was an error when attempting to create a Group in GitLab";
         private const string ErrorMigratingRepository = "The migration to GitLab process failed";
 
         public MigrationService(ISvnService svnService)
@@ -35,6 +35,7 @@ namespace Svn2GitMIgrator.Domain
         {
             var migrationResult = new MigrationResult();
             callback("Creating group: " + request.GitGroupName + Environment.NewLine);
+
             var createGroupResult = CreateGitLabGroup(request, callback);
             if (createGroupResult)
             {

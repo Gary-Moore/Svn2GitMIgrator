@@ -44,7 +44,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             }
             catch (SvnRepositoryIOException ex)
             {
-                throw new SvnMigrationException(ex.Message, ex); ;
+                throw new SvnMigrationException(ex.Message, ex);
             }            
         }
         
@@ -64,7 +64,7 @@ namespace Svn2GitMIgrator.Domain.Svn
             }
             catch (SvnRepositoryIOException ex)
             {
-                throw new SvnMigrationException(ex.Message, ex); ;
+                throw new SvnMigrationException(ex.Message, ex);
             }
 
             return authors.Distinct();
