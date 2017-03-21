@@ -120,7 +120,6 @@ namespace Svn2GitMIgrator.Domain
                 if (knownUser != null)
                 {
                     authorText.AppendFormat("{1} = {0} <{1}@parliament.uk>", knownUser.Author, knownUser.Svnname);
-                    
                 }
                 else
                 {
@@ -178,6 +177,7 @@ namespace Svn2GitMIgrator.Domain
             powerScript.AddArgument("gitUserEmail", request.GitUserEmail);
             powerScript.AddArgument("gitUserName", request.GitUserName);
             powerScript.AddArgument("originUrl", originUrl);
+            powerScript.AddArgument("nonstandardfolder", request.NonStandardFolder.ToString());
 
             return powerScript.ExecuteAync();
         }        

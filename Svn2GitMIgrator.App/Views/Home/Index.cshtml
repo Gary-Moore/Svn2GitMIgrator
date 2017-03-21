@@ -90,6 +90,7 @@
         <div ng-show="vm.showProgress">
             <div class="panel panel-primary">
                 <div class="panel-heading">
+                    
                     Migration Progress
                 </div>
                 <div class="panel-body">
@@ -169,6 +170,9 @@
                 <div class="form-group">
                     <label for="rootUrl">GitLab Project Path</label>
                     <input ng-model="vm.model.gitprojectPath" type="text" class="form-control" id="gitprojectPath" placeholder="Project Path">
+                </div>
+                <div class="checkbox">
+                    <label><input ng-model="vm.model.nonstandardfolder" type="checkbox" /> Non-Standard folder</label>
                 </div>
             </form>
         </div>

@@ -214,6 +214,7 @@
     <Content Include="Scripts\angular-local-storage.min.js.map" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
+    <None Include="Properties\PublishProfiles\develop.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\App\core\core.module.js" />
     <Content Include="Scripts\App\svn\migrationmodal.controller.js" />

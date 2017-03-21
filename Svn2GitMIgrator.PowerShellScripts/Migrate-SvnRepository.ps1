@@ -33,7 +33,8 @@ Param(
 	[Parameter(Mandatory=$true)][string]$password,
 	[Parameter(Mandatory=$true)][string]$originUrl,
 	[Parameter(Mandatory=$true)][string]$gitUserName,
-	[Parameter(Mandatory=$true)][string]$gitUserEmail
+	[Parameter(Mandatory=$true)][string]$gitUserEmail,
+	[Parameter(Mandatory=$true)][bool]$nonstandardfolder
 )
 
 #Variables
@@ -42,7 +43,14 @@ $workingRepoFolder = $checkoutPath + '/repo';
 Write-Progress "Cloning SVN repository into Git folder"
 
 # Clone SVN repo into local Git Repository
-echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t releases/* -T trunk $workingRepoFolder
+if($nonstandardfolder){
+	# Non standard folder structure - non trunk sub folder
+	echo $password | git svn clone $repoUrl.Trim('\') --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt $workingRepoFolder
+}else{
+	# Standard folder structure with trunk and release folders
+	echo $password | git svn clone $repoUrl --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt -t releases/* -T trunk $workingRepoFolder
+}
+
 
 # Download visual studio .gitignore file into repository folder from github
 Invoke-WebRequest https://raw.githubusercontent.com/github/gitignore/master/VisualStudio.gitignore -OutFile $workingRepoFolder/.gitignore

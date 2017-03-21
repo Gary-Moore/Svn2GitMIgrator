@@ -30,7 +30,7 @@ namespace Svn2GitMIgrator.App.Controllers
         [HttpPost]
         public ActionResult MigrateRepo(GitMigrationRequest request)
         {
-            WebResult result = new WebResult();
+            var result = new WebResult();
             try
             {
                 var migrationResult = _migrationService.Migrate(request, NotifyUpdates);
@@ -49,7 +49,7 @@ namespace Svn2GitMIgrator.App.Controllers
         [HttpPost]
         public ActionResult Search(SvnRepositoryRequest request)
         {
-            WebResult result = new WebResult();
+            var result = new WebResult();
             try
             {
                 var data = _svnService.GetRepoList(request).ToList();

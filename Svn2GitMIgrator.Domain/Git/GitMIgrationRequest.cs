@@ -13,5 +13,6 @@ namespace Svn2GitMIgrator.Domain.Git
         public string GitUserName { get; set; }
         public string GitUserEmail { get; set; }
         public string GitPassword { get; set; }
+        public bool NonStandardFolder { get; set; }
     }
 }
