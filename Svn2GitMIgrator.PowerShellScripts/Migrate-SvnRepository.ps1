@@ -34,7 +34,7 @@ Param(
 	[Parameter(Mandatory=$true)][string]$originUrl,
 	[Parameter(Mandatory=$true)][string]$gitUserName,
 	[Parameter(Mandatory=$true)][string]$gitUserEmail,
-	[Parameter(Mandatory=$true)][bool]$nonstandardfolder
+	[Parameter(Mandatory=$true)][string]$nonstandardfolder
 )
 
 #Variables
@@ -43,7 +43,7 @@ $workingRepoFolder = $checkoutPath + '/repo';
 Write-Progress "Cloning SVN repository into Git folder"
 
 # Clone SVN repo into local Git Repository
-if($nonstandardfolder){
+if($nonstandardfolder -eq 'True'){
 	# Non standard folder structure - non trunk sub folder
 	echo $password | git svn clone $repoUrl.Trim('\') --username $username --no-metadata --quiet -A $checkoutPath/authors-transform.txt $workingRepoFolder
 }else{
