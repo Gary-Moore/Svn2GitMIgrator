@@ -57,7 +57,9 @@ namespace Svn2GitMIgrator.Domain.Svn
                 using (var client = GetSvnClient())
                 {
                     var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                    client.Log(repoUrl.Uri, (o, e) => {
+                    var args = GetSvnLogArgs();
+                    
+                    client.Log(repoUrl.Uri, args, (o, e) => {
                         authors.Add(e.Author);
                     });
                 }
@@ -69,7 +71,13 @@ namespace Svn2GitMIgrator.Domain.Svn
 
             return authors.Distinct();
         }
-        
+
+        private static SvnLogArgs GetSvnLogArgs()
+        {
+            
+            return new SvnLogArgs {Limit = 300};
+        }
+
         private void SetCredentials(SvnRepositoryRequest request)
         {
             if (string.IsNullOrEmpty(request.Password))
