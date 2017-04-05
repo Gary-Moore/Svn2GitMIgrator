@@ -119,6 +119,10 @@
     {
       "svnname": "stonet",
       "author": "Tim Stone"
+    },
+    {
+      "svnname": "julierp",
+      "author": "Paul Julier"
     }
   ]
 }

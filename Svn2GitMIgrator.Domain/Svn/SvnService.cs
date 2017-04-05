@@ -75,7 +75,7 @@ namespace Svn2GitMIgrator.Domain.Svn
         private static SvnLogArgs GetSvnLogArgs()
         {
             
-            return new SvnLogArgs {Limit = 300};
+            return new SvnLogArgs {Limit = 2000};
         }
 
         private void SetCredentials(SvnRepositoryRequest request)

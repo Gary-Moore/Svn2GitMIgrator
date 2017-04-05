@@ -63,6 +63,7 @@ Foreach ($tag in git for-each-ref --format='%(refname:short)' refs/remotes/origi
 	# create proper tag
 	git tag $tagName $tag
 	# remove remote tag
+
 	git branch -D -r $tag
 }
 
