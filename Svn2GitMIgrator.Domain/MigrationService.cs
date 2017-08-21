@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Svn2GitMIgrator.Domain.FileSystem;
 using Svn2GitMIgrator.Domain.Svn;
 using Svn2GitMIgrator.Domain.TaskAutomation;
+using System;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.Domain
 {
@@ -13,6 +15,10 @@ namespace Svn2GitMIgrator.Domain
     {
         private readonly ISvnService _svnService;
         private readonly string _workingDirectoryPath;
+
+        private const string ErrorCreatingProject = "There was an error when attempting to create a project in GitLab";
+        private const string ErrorCreatingGroup = "There was an error when attempting to create a Group in GitLab";
+        private const string ErrorMigratingRepository = "The migration to GitLab process failed";
 
         public MigrationService(ISvnService svnService)
         {
@@ -25,22 +31,81 @@ namespace Svn2GitMIgrator.Domain
             }
         }
 
-        public void Migrate(SvnRepositoryRequest request)
+        public MigrationResult Migrate(GitMigrationRequest request, Action<string> callback)
         {
-            var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
+            var migrationResult = new MigrationResult();
+            callback("Creating group: " + request.GitGroupName + Environment.NewLine);
 
-            LogUniqueUserToFile(request, checkoutPath);
+            var createGroupResult = CreateGitLabGroup(request, callback);
+            if (createGroupResult)
+            {
+                callback("Creating project: " + request.GitProjectName + Environment.NewLine);
+                var groupId = createGroupResult.Outputs.FirstOrDefault().ToString();
+                var createProjectResult = CreateGitLabProject(request, groupId, callback);
 
-            CloneRepository(request, checkoutPath);
+                if (createProjectResult)
+                {
+                    var gitLabProjectUrl = createProjectResult.Outputs.FirstOrDefault().ToString();
+                    var originUrl = ExtractGitOriginUrl(gitLabProjectUrl, request.GitLabUrl, request.GitUserName, request.GitPassword);
+                    callback("Created origin at : " + gitLabProjectUrl + Environment.NewLine);
 
-            // create git ignore file
+                    var checkoutPath = SetWorkingFolder(request.RepositorylUrl);
 
-            // create new gitlab project
+                    // create new gitlab project
+                    LogUniqueUserToFile(request, checkoutPath);
+                    callback("Migrating repository" + Environment.NewLine);
+                    var cloneResult = CloneRepository(request, checkoutPath, originUrl, callback);
 
-            // push to new project
+                    if (cloneResult)
+                    {
+                        callback("SVN Repository successfully migrated!" + Environment.NewLine);
+                        migrationResult.Success = true;
+                    }
+                    else
+                    {
+                        migrationResult.Success = false;
+                        callback(ErrorMigratingRepository + Environment.NewLine);
+                        migrationResult.ErrorMessages.Add(ErrorMigratingRepository);
+                    }
+                }
+                else
+                {
+                    callback(ErrorCreatingProject + Environment.NewLine);
+                    OutputErrors(createProjectResult, callback);
+                    migrationResult.Success = false;
+                    migrationResult.ErrorMessages.Add(ErrorCreatingProject);
+                }
+            }
+            else
+            {
+                callback(ErrorCreatingGroup + Environment.NewLine);
+                OutputErrors(createGroupResult, callback);
+                migrationResult.Success = false;
+                migrationResult.ErrorMessages.Add(ErrorCreatingGroup);
+            }
+
+            return migrationResult;
+        }
+
+        private void OutputErrors(ScriptExecutionResult result, Action<string> errorCallback)
+        {
+            foreach (var error in result.ErrorMessages)
+            {
+                errorCallback(error + Environment.NewLine);
+            }
+        }
+
+        private string ExtractGitOriginUrl(string sourceUrl, string gitlabUrl, string username, string password)
+        {
+            var splitVals = sourceUrl.Split('/');
+            var projectSegment = splitVals[splitVals.Length - 1];
+            var groupSegment = splitVals[splitVals.Length - 2];
+            var host = new Uri(gitlabUrl).Host;
+
+            return $"http://{username}:{password}@{host}/{groupSegment}/{projectSegment}";
         }
         
-        private void LogUniqueUserToFile(SvnRepositoryRequest request, string checkoutPath)
+        private void LogUniqueUserToFile(GitMigrationRequest request, string checkoutPath)
         {
             var filePath = FileSystemHelper.GetFilePath("knownUsernames.json");
             var knownUsers = JsonConvert.DeserializeObject<KnownUserList>(File.ReadAllText(filePath));
@@ -55,11 +120,10 @@ namespace Svn2GitMIgrator.Domain
                 if (knownUser != null)
                 {
                     authorText.AppendFormat("{1} = {0} <{1}@parliament.uk>", knownUser.Author, knownUser.Svnname);
-                    
                 }
                 else
                 {
-                    authorText.AppendFormat("{1} = {0} <{1}@parliament.uk>", "Mike Hunt", uniqueAuthor);
+                    authorText.AppendFormat("{0} = {0} <{0}@parliament.uk>", uniqueAuthor);
                 }
                 authorText.AppendLine();
             }
@@ -80,21 +144,42 @@ namespace Svn2GitMIgrator.Domain
             return workingCheckoutDirectoryPath;
         }
 
-        private void CloneRepository(SvnRepositoryRequest request, string checkoutPath)
+        private ScriptExecutionResult CreateGitLabProject(GitMigrationRequest request, string groupId, Action<string> callback)
         {
-            var powerScript = new CloneSvnRepository();
+            var powerScript = new CreateGitLabProject(callback);
+            powerScript.AddArgument("projectname", request.GitProjectName);
+            powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
+            powerScript.AddArgument("path", request.GitProjectPath);
+            powerScript.AddArgument("namespaceid", groupId);
+            powerScript.AddArgument("privatetoken", request.PrivateToken);
+
+            return powerScript.Execute();
+        } 
+
+        private ScriptExecutionResult CreateGitLabGroup(GitMigrationRequest request, Action<string> callback)
+        {
+            var powerScript = new CreateGitLabGroup(callback);
+            powerScript.AddArgument("groupname", request.GitGroupName);
+            powerScript.AddArgument("groupPath", request.GitGroupPath);
+            powerScript.AddArgument("gitlabUrl", request.GitLabUrl);
+            powerScript.AddArgument("privatetoken", request.PrivateToken);
+
+            return powerScript.Execute();
+        }
+
+        private ScriptExecutionResult CloneRepository(GitMigrationRequest request, string checkoutPath, string originUrl, Action<string> callback)
+        {
+            var powerScript = new MigrateToGitRepository(callback);
             powerScript.AddArgument("repoUrl", request.RepositorylUrl);
             powerScript.AddArgument("checkoutPath", checkoutPath);
             powerScript.AddArgument("username", request.Username);
             powerScript.AddArgument("password", request.Password);
+            powerScript.AddArgument("gitUserEmail", request.GitUserEmail);
+            powerScript.AddArgument("gitUserName", request.GitUserName);
+            powerScript.AddArgument("originUrl", originUrl);
+            powerScript.AddArgument("nonstandardfolder", request.NonStandardFolder.ToString());
 
-            powerScript.AddArgument("projectName", "PapersLaid.Admin");
-            powerScript.AddArgument("privatetoken", "iac_MyKnRhxXH1ZxWfEp");
-            powerScript.AddArgument("gitlabUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com");
-            powerScript.AddArgument("originUrl", "http://gitlab-devops-test.northeurope.cloudapp.azure.com/garymoore/PapersLaid.Admin.git");
-
-
-            powerScript.Execute();
-        }
+            return powerScript.ExecuteAync();
+        }        
     }
 }

@@ -23,8 +23,16 @@ namespace Svn2GitMIgrator.App
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/signalr").Include(
+                        "~/Scripts/jquery.signalR-{version}.js"
+                        ));
+
             bundles.Add(new ScriptBundle("~/assets/js/angular/bundle").Include(
+                        "~/Scripts/toastr.js",
                         "~/Scripts/angular.js",
+                        "~/Scripts/angular-signalr-hub.js",
+                        "~/Scripts/angular-ui/ui-bootstrap-tpls.js",
+                        "~/Scripts/angular-local-storage.js",
                         "~/Scripts/App/Core/*module.js",
                         "~/Scripts/App/Core/*.js"
                         ));
@@ -36,6 +44,7 @@ namespace Svn2GitMIgrator.App
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/toastr.css",
                       "~/Content/site.css"));
         }
     }

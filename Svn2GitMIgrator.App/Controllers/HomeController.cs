@@ -1,8 +1,13 @@
-﻿using Svn2GitMIgrator.App.Models;
+﻿using System;
 using Svn2GitMIgrator.Domain.Svn;
 using System.Linq;
 using System.Web.Mvc;
 using Svn2GitMIgrator.Domain;
+using Svn2GitMIgrator.App.Models;
+using Microsoft.AspNet.SignalR;
+using Svn2GitMIgrator.App.Hubs;
+using System.Threading.Tasks;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.App.Controllers
 {
@@ -23,17 +28,49 @@ namespace Svn2GitMIgrator.App.Controllers
         }
 
         [HttpPost]
-        public ActionResult MigrateRepo(SvnRepositoryRequest request)
+        public ActionResult MigrateRepo(GitMigrationRequest request)
         {
-            _migrationService.Migrate(request);
-            return new EmptyResult();
+            var result = new WebResult();
+            try
+            {
+                var migrationResult = _migrationService.Migrate(request, NotifyUpdates);
+                result.Error = !migrationResult.Success;
+                result.Message = string.Join(Environment.NewLine, migrationResult.ErrorMessages.ToArray());
+            }
+            catch (SvnMigrationException ex)
+            {
+                result.Error = true;
+                result.Message = ex.Message;
+            }
+            
+            return Json(result);
         }
 
         [HttpPost]
         public ActionResult Search(SvnRepositoryRequest request)
         {
-            var data = _svnService.GetRepoList(request).ToList();
-            return Json(data);
+            var result = new WebResult();
+            try
+            {
+                var data = _svnService.GetRepoList(request).ToList();
+                result.Data = data;
+            }
+            catch (SvnMigrationException ex)
+            {
+                result.Error = true;
+                result.Message = ex.Message;
+            }
+            
+            return Json(result);
+        }
+
+        public void NotifyUpdates(string message)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MigrationHub>();
+            if (hubContext != null)
+            {
+               hubContext.Clients.All.progress(message);
+            }
         }
     }
 }

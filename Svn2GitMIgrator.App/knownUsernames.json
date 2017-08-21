@@ -2,11 +2,11 @@
   "users": [
     {
       "svnname": "adamss",
-      "author": "Stephen Adams"
+      "author": "Steve Adams"
     },
     {
       "svnname": "bolts",
-      "author": "Stephen Bolt"
+      "author": "Steve Bolt"
     },
     {
       "svnname": "moorega",
@@ -23,7 +23,106 @@
     {
       "svnname": "jonesn",
       "author": "Nick Jones"
+    },
+    {
+      "svnname": "eglina",
+      "author": "Ashley Eglin"
+    },
+    {
+      "svnname": "lackd",
+      "author": "Dan Lack"
+    },
+    {
+      "svnname": "oliverr",
+      "author": "Richard Oliver"
+    },
+    {
+      "svnname": "skynet",
+      "author": "Skynet Solution Builder"
+    },
+    {
+      "svnname": "kellyt",
+      "author": "Tom Kelly"
+    },
+    {
+      "svnname": "brooksbankc",
+      "author": "Chris Brooksbank"
+    },
+    {
+      "svnname": "adefioyea",
+      "author": "Abigail Adefioye"
+    },
+    {
+      "svnname": "tatapudiv",
+      "author": "Vaidehi Tatapudi"
+    },
+    {
+      "svnname": "hayters",
+      "author": "Steve Hayter"
+    },
+    {
+      "svnname": "wortha",
+      "author": "Andrew Worth"
+    },
+    {
+      "svnname": "bassanic",
+      "author": "Christain Bassani"
+    },
+    {
+      "svnname": "wrightr",
+      "author": "Rob Wright"
+    },
+    {
+      "svnname": "kairamkondaa",
+      "author": "Anitha Kairamkonda"
+    },
+    {
+      "svnname": "mccormickb",
+      "author": "Barry McCormick"
+    },
+    {
+      "svnname": "muqueshraiv",
+      "author": "Viveck Muqueshrai"
+    },
+    {
+      "svnname": "bamitaleaa",
+      "author": "Adebayo Bamitale"
+    },
+    {
+      "svnname": "sanganik",
+      "author": "Kushal Sangani"
+    },
+    {
+      "svnname": "depullaj",
+      "author": "Julius Depulla"
+    },
+    {
+      "svnname": "sharkeyn",
+      "author": "Neil Sharkey"
+    },
+    {
+      "svnname": "graffing",
+      "author": "Gavin Graffin"
+    },
+    {
+      "svnname": "spainm",
+      "author": "Martin Spain"
+    },
+    {
+      "svnname": "houghtonp",
+      "author": "Paul Houghton"
+    },
+    {
+      "svnname": "hutchinsonm",
+      "author": "Mark Hutchinson"
+    },
+    {
+      "svnname": "stonet",
+      "author": "Tim Stone"
+    },
+    {
+      "svnname": "julierp",
+      "author": "Paul Julier"
     }
   ]
 }
-

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using SharpSvn;
 using SharpSvn.Security;
-using Svn2GitMIgrator.Domain.FileSystem;
+using Svn2GitMIgrator.Domain.Git;
 
 namespace Svn2GitMIgrator.Domain.Svn
 {
@@ -16,84 +15,84 @@ namespace Svn2GitMIgrator.Domain.Svn
         private string _svnPassword;
         private string _svnRootUrl;
         private string _svnUsername;
-        private readonly string _workingDirectoryPath;
 
         public SvnService()
         {
-            _workingDirectoryPath = ConfigurationManager.AppSettings["WorkingFolderPath"];
-
-            if (string.IsNullOrWhiteSpace(_workingDirectoryPath))
-            {
-                throw new ConfigurationErrorsException("App setting 'WorkingFolderPath' is missing or empty");
-            }
         }
 
         public IEnumerable<SvnRepoInfo> GetRepoList(SvnRepositoryRequest request)
         {
             SetCredentials(request);
 
-            using (var client = GetSvnClient())
+            try
             {
-                Collection<SvnListEventArgs> contents;
-                var repoList = new List<SvnRepoInfo>();
-                if(client.GetList(new Uri(_svnRootUrl), out contents))
+                using (var client = GetSvnClient())
                 {
-                    repoList = contents.Where(content => !string.IsNullOrEmpty(content.Name) )
-                        .Select(content => new SvnRepoInfo
+                    Collection<SvnListEventArgs> contents;
+                    var repoList = new List<SvnRepoInfo>();
+                    if (client.GetList(new Uri(_svnRootUrl), out contents))
                     {
-                        Name = content.Name,
-                        Url = content.Uri.AbsoluteUri
-                    }).ToList();
+                        repoList = contents.Select(content => new SvnRepoInfo
+                        {
+                            Name = content.Name,
+                            Url = content.Uri.AbsoluteUri
+                        }).ToList();
+                    }
+
+                    return repoList;
                 }
-
-                return repoList;
             }
-        }
-
-        public string Checkout(SvnRepositoryRequest request)
-        {
-            SetCredentials(request);
-            var workingCheckoutDirectoryPath = SetWorkingCheckoutDirectoryPath(request.RepositorylUrl);
-
-            using (var client = GetSvnClient())
+            catch (SvnRepositoryIOException ex)
             {
-                var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                client.CheckOut(repoUrl, workingCheckoutDirectoryPath);
-                client.Upgrade(workingCheckoutDirectoryPath);
-            }
-
-            return workingCheckoutDirectoryPath;
+                throw new SvnMigrationException(ex.Message, ex);
+            }            
         }
-
-        public IEnumerable<string> LogUniqueUsers(SvnRepositoryRequest request, string checkoutPath)
+        
+        public IEnumerable<string> LogUniqueUsers(GitMigrationRequest request, string checkoutPath)
         {
             var authors = new List<string>();
             SetCredentials(request);
-            using (var client = GetSvnClient())
+            try
             {
-                var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
-                client.Log(repoUrl.Uri, (o, e) => {
-                    authors.Add(e.Author);
-                });
+                using (var client = GetSvnClient())
+                {
+                    var repoUrl = SvnUriTarget.FromString(request.RepositorylUrl);
+                    var args = GetSvnLogArgs();
+                    
+                    client.Log(repoUrl.Uri, args, (o, e) => {
+                        authors.Add(e.Author);
+                    });
+                }
+            }
+            catch (SvnRepositoryIOException ex)
+            {
+                throw new SvnMigrationException(ex.Message, ex);
             }
 
             return authors.Distinct();
         }
 
-        private string SetWorkingCheckoutDirectoryPath(string repositorylUrl)
+        private static SvnLogArgs GetSvnLogArgs()
         {
-            var splitVals = repositorylUrl.Split('/');
-            var appFolderName = splitVals[splitVals.Length - 2];
-
-            var workingCheckoutDirectoryPath = Path.Combine(_workingDirectoryPath, splitVals[splitVals.Length - 3], splitVals[splitVals.Length - 2]);
-            var directory = FileSystemHelper.EnsureFolderExists(workingCheckoutDirectoryPath);
-            FileSystemHelper.ClearFolder(directory);
             
-            return workingCheckoutDirectoryPath;
+            return new SvnLogArgs {Limit = 2000};
         }
 
         private void SetCredentials(SvnRepositoryRequest request)
         {
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                throw new SvnMigrationException("A SVN password wasn't provided");
+            }
+            if (string.IsNullOrEmpty(request.RootUrl))
+            {
+                throw new SvnMigrationException("A SVN Repository Url wasn't provided");
+            }
+            if (string.IsNullOrEmpty(request.Username))
+            {
+                throw new SvnMigrationException("A SVN Username wasn't provided");
+            }
+            
             _svnPassword = request.Password;
             _svnRootUrl = request.RootUrl;
             _svnUsername = request.Username;

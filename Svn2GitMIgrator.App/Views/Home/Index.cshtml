@@ -4,45 +4,183 @@
 }
 <h1>Svn 2 Git Repo Migrator</h1>
 <div ng-app="migrator.svn" ng-controller="SvnRepoController as vm">
-    <div class="row">
-        <div class="col-md-12">
-            <form class="form-inline">
-                <div class="form-group">
-                    <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" placeholder="SVN Root Url">
-                </div>
-                <div class="form-group">
-                    <input ng-model="vm.model.username" type="text" class="form-control" id="username" placeholder="Username">
-                </div>
-                <div class="form-group">
-                    <input ng-model="vm.model.password" type="password" class="form-control" id="password" placeholder="Password">
-                </div>
-                <button type="submit" class="btn btn-default" ng-click="vm.search()">Search</button>
-            </form>
-        </div>
-        
-    </div>
-    
-    <div class="row" ng-show="vm.repos">
-        <div class="col-md-12">
-            <h2>Svn folders</h2>
-            <div class="list-group">
-                <div ng-repeat="repo in vm.repos" class="list-group-item">
-                    <h4>{{repo.Name}}</h4>
-                    <p class="list-group-item-text clearfix">
-                        
-                        <input type="button" class="btn btn-primary pull-right" value="Migrate" ng-click="vm.migrate(repo.Url)"/>
-                        
-                        <button type="button" class="btn btn-default pull-right" ng-click="vm.navigate(repo.Url)">
-                            <i class="glyphicon glyphicon-circle-arrow-down"></i>
-                        </button> 
-                        {{repo.Url}}
-                    </p>
+    <div ng-cloak>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" ng-click="vm.settingsCollapsed = !vm.settingsCollapsed">
+                            {{vm.settingsCollapsed ? "Show" : "Hide"}} Settings
+                        </button>
+                        <button type="submit" class="btn btn-primary" ng-click="vm.search()">Load Repository</button>
+                        <div class="input-group ">
+                            <input ng-model="vm.searchText" type="text" class="form-control" placeholder="Filter folders">
+                            <div class="input-group-addon btn" ng-click="vm.searchText = ''">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
+        <br />
+        <div uib-collapse="vm.settingsCollapsed">
+            <div class="well">
+                <form novalidate name="settingsForm" class="form-horizontal">
+                    <fieldset>
+                        <legend>SVN</legend>
+                        <div class="form-group">
+                            <label for="rootUrl" class="col-sm-2 control-label">Repository Root Url</label>
+                            <div class="col-sm-9">
+                                <input ng-model="vm.model.rootUrl" type="url" class="form-control" id="rootUrl" required placeholder="SVN Root Url">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">Username</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.username" type="text" class="form-control" id="username" required placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-sm-2 control-label">Password</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.password" type="password" class="form-control" id="password" required placeholder="Password">
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>GitLab</legend>
+                        <div class="form-group">
+                            <label for="gitLabUrl" class="col-sm-2 control-label">Repository Url</label>
+                            <div class="col-sm-9">
+                                <input ng-model="vm.model.gitLabUrl" type="url" class="form-control" id="gitLabUrl" required placeholder="GitLab Url">
+                            </div>                            
+                        </div>
+                        <div class="form-group">
+                            <label for="privateToken" class="col-sm-2 control-label">Private Token</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.privateToken" type="password" class="form-control" id="privateToken" required placeholder="Private Key">
+                            </div>                            
+                        </div>
+                        <div class="form-group">
+                            <label for="gitUserName" class="col-sm-2 control-label">Git User name</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.gitUserName" type="text" class="form-control" id="gitUserName" required placeholder="Git User name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gitUserEmail" class="col-sm-2 control-label">Git Email address</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.gitUserEmail" type="email" class="form-control" id="gitUserEmail" required placeholder="Git Email address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gitPassword" class="col-sm-2 control-label">Git Password</label>
+                            <div class="col-sm-4">
+                                <input ng-model="vm.model.gitPassword" type="password" class="form-control" id="gitPassword" required placeholder="Git Password">
+                            </div>
+                        </div>
+                    </fieldset>
+                    
+                    <button type="submit" class="btn btn-primary" ng-disabled="!settingsForm.$valid" ng-click="vm.saveSettings()">Save</button>
+                </form>
+            </div>
+        </div>
+
+        <div ng-show="vm.showProgress">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    
+                    Migration Progress
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <textarea ng-model="vm.messages" class="form-control" rows="10"></textarea>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="" ng-show="vm.repos">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    SVN Repository Folders
+                </div>
+                <div class="panel-body">
+                    <div class="col-sm-9">
+                        <h3>Current folder - {{vm.repos[0].Name || 'Root'}}</h3>
+                    </div>
+                    
+                    <span class="pull-right">
+                        <button type="button" ng-show="vm.repos[0].Name" class="btn btn-default" ng-click="vm.navigateBack(vm.repos[0].Url)">
+                            <i class="glyphicon glyphicon-circle-arrow-up"></i> Up Level
+                        </button>
+                    </span>
+                </div>
+
+                <div class="list-group">
+                    <div ng-repeat="repo in vm.repos | filter:vm.searchText" ng-if="$index > 0" class="list-group-item clearfix">
+                        <h4>{{repo.Name}}</h4>
+                        <p class="list-group-item-text ">
+                            <span class="pull-right">
+
+                                <button type="button" ng-show="vm.repos[0].Name" class="btn btn-default" ng-click="vm.navigateBack(vm.repos[0].Url)">
+                                    <i class="glyphicon glyphicon-circle-arrow-up"></i> Up Level
+                                </button>
+                                
+                                <button type="button" class="btn btn-default" ng-click="vm.navigate(repo.Url)">
+                                    <i class="glyphicon glyphicon-circle-arrow-down"></i> Down Level
+                                </button>
+                                
+                                <button type="button" class="btn btn-primary" ng-click="vm.openMigrateModal(repo.Url)" >
+                                    <i class="glyphicon glyphicon-export"></i> Migrate
+                                </button>
+
+                            </span>
+                            
+                            {{repo.Url}}
+                            
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
+    <script type="text/ng-template" id="migrateRepo.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">Migrate SVN Repo</h3>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form class="form" ng-hide="vm.showProgress">
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Group Name</label>
+                    <input ng-model="vm.model.gitGroupName" type="text" class="form-control" id="gitGroupName" placeholder="Group name">
+                </div>
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Group Path</label>
+                    <input ng-model="vm.model.gitGroupPath" type="text" class="form-control" id="gitGroupPath" placeholder="Group path">
+                </div>
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Project Name</label>
+                    <input ng-model="vm.model.gitProjectName" type="text" class="form-control" id="gitProjectName" placeholder="Project name">
+                </div>
+                <div class="form-group">
+                    <label for="rootUrl">GitLab Project Path</label>
+                    <input ng-model="vm.model.gitprojectPath" type="text" class="form-control" id="gitprojectPath" placeholder="Project Path">
+                </div>
+                <div class="checkbox">
+                    <label><input ng-model="vm.model.nonstandardfolder" type="checkbox" /> Non-Standard folder</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="vm.migrate()">Continue</button>
+            <button class="btn btn-warning" type="button" ng-click="vm.cancel()">Cancel</button>
+        </div>
+    </script>
 </div>
 
 @section scripts{

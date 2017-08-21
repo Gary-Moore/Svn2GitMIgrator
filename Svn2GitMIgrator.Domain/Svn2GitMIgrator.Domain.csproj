@@ -66,18 +66,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileSystem\FileSystemHelper.cs" />
-    <Compile Include="Git\GitLabService.cs" />
     <Compile Include="IMigrationService.cs" />
+    <Compile Include="MigrationResult.cs" />
     <Compile Include="MigrationService.cs" />
+    <Compile Include="SvnMigrationException.cs" />
+    <Compile Include="Git\GitMIgrationRequest.cs" />
     <Compile Include="Svn\User.cs" />
+    <Compile Include="TaskAutomation\CreateGitLabGroup.cs" />
+    <Compile Include="TaskAutomation\CreateGitLabProject.cs" />
     <Compile Include="TaskAutomation\PowershellScript.cs" />
     <Compile Include="Svn\ISvnService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Svn\SvnService.cs" />
     <Compile Include="Svn\SvnRepoInfo.cs" />
     <Compile Include="Svn\SvnRepositoryRequest.cs" />
-    <Compile Include="TaskAutomation\CloneSvnRepository.cs" />
+    <Compile Include="TaskAutomation\MigrateToGitRepository.cs" />
     <Compile Include="Svn\KnownUserList.cs" />
+    <Compile Include="TaskAutomation\ScriptExecutionResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

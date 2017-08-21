@@ -16,9 +16,10 @@
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+form input.ng-invalid{
+    border-color: #FA787E;
+}
+
+form input.ng-valid {
+    border-color: lightgreen;
 }
